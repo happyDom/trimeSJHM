@@ -47,7 +47,7 @@
 您可以通过下划<font color=red>**口**</font>键（<font color=gray>对应数字 <font color=red>**6**</font></font>）键切换到9宫格键盘，如下👇：  
 ![6d1eb7128df8049bc5cfea8724bbc62](https://s2.loli.net/2025/04/20/6jx7z4UEyk2bsXG.jpg)
 
-## 关于 **四角号码** 重码率的统计
+## 关于 **四角号码** 单字重码率的统计
 
 在一个基于 <font color=red>**26315**</font> 字的统计样本中，以定长四码为统计标准，单字重码率数据如下👇：  
 ![20250420232418](https://s2.loli.net/2025/04/20/isofpLRBqEAIUS8.png)  
@@ -60,6 +60,35 @@
 作为对比，统计所给样本字的拼音重码率，其中包含共有拼音 <font color=red>**407**</font> 种，单字重码率数据如下👇：  
 ![20250420232748](https://s2.loli.net/2025/04/20/QrS2Vg3wLnEblat.png)
 其中重码最多的一个拼音为 <font color=red>**yi**</font>，重量为 <font color=red>**488**</font> 码。
+
+作为对比，摘取四角号码重码最严重的前 <font color=red>**407**</font> 码，其重码率数据如下👇：  
+![20250420233201](https://s2.loli.net/2025/04/20/IkQ51JPj9GWLfpx.png)  
+![20250420233219](https://s2.loli.net/2025/04/20/Ca9YHs8XhF2mRIT.png)  
+
+以上对比可以看出，**四角号码**方案在单词重码率数据方面的表现，是要优于**拼音**方案的。
+
+## 关于 **四角号码** 二字词语重码率的统计
+
+基于字典 <font color=green>sjhm_dyy.dict.yaml</font> 内所含 2 字词语 <font color=red>**163608**</font> 组，统计重码率情况。
+
+基于 <font color=red>**33**</font> 取码法（<font color=gray>即在首、尾字各取其首 <font color=red>3</font> 码，共 <font color=red>6</font> 码，构成词语编码</font>）的重码率率计如下👇：  
+![20250420235504](https://s2.loli.net/2025/04/20/FW1YXPoxRB7cVTe.png)  
+
+基于 <font color=red>**34**</font> 取码法（<font color=gray>即在首字取其首 <font color=red>3</font> 码，在尾字取其首 <font color=red>4</font> 码，共 <font color=red>7</font> 码，构成词语编码</font>）的重码率率计如下👇：  
+![20250420235848](https://s2.loli.net/2025/04/20/cT9QKUWJtp2GAFn.png)  
+
+其中，具体数据列出如下👇：
+
+取码法|总<font color=green>**码**</font>数|重码 <font color=red>10(含)</font>以内的<font color=green>**码**</font>数|重码<font color=red>10(含)</font>以内的<font color=green>**码**</font>数占比
+:-|:-:|:-:|:-:
+<font color=red>33</font>取码|<font color=red>68426</font>|<font color=red>66875</font>|<font color=red>97.73%</font>
+<font color=red>34</font>取码|<font color=red>100359</font>|<font color=red>99859</font>|<font color=red>99.5%</font>
+
+取码法|总<font color=green>**词**</font>数|重码 <font color=red>10(含)</font>以内的<font color=green>**词**</font>数|重码<font color=red>10(含)</font>以内的<font color=green>**词**</font>数占比
+:-|:-:|:-:|:-:
+<font color=red>33</font>取码|<font color=red>163608</font>|<font color=red>136655</font>|<font color=red>83.53%</font>
+<font color=red>34</font>取码|<font color=red>163608</font>|<font color=red>156277</font>|<font color=red>95.52%</font>
+
 
 ## 鸣谢
 
