@@ -15,7 +15,7 @@
 
 ## 使用方法
 
-- 安装【同文输入法】：https://github.com/osfans/trime.git
+- 安装【[同文输入法](https://github.com/osfans/trime.git)】
 - 下载本方案
 - 把本方案的 <font color=green>yaml</font> 文档放入同文输入法的用户文件夹内（<font color=gray>一般来说，应该是一个叫 <font color=green>rime</font> 的文件夹</font>）
 
