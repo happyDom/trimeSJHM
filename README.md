@@ -36,7 +36,8 @@
   - 如果是字母按键（a-z），长按输入对应的大写字母
   - 其它按键，如果按键中间写有多个字符，则长按输入右侧的字符
 
-![Snipaste_2025-04-20_22-07-02](https://s2.loli.net/2025/04/20/6DrQgo8FWK43ysS.png)
+![Snipaste_2025-04-20_22-07-02](https://s2.loli.net/2025/04/20/6DrQgo8FWK43ysS.png)  
+![Snipaste_2025-04-20_23-20-03](https://s2.loli.net/2025/04/20/XSJGZyMau1lDg7z.png)
 
 ## 键盘切换
 
@@ -45,6 +46,20 @@
 
 您可以通过下划<font color=red>**口**</font>键（<font color=gray>对应数字 <font color=red>**6**</font></font>）键切换到9宫格键盘，如下👇：  
 ![6d1eb7128df8049bc5cfea8724bbc62](https://s2.loli.net/2025/04/20/6jx7z4UEyk2bsXG.jpg)
+
+## 关于 **四角号码** 重码率的统计
+
+在一个基于 <font color=red>**26315**</font> 字的统计样本中，以定长四码为统计标准，单字重码率数据如下👇：  
+![20250420232418](https://s2.loli.net/2025/04/20/isofpLRBqEAIUS8.png)  
+其中重码最多的一个码，重码量为 <font color=red>**134**</font> 码。
+
+如果以不定长码（<font color=gray>存在1码、2码、3码、4码、5码、6码的样式，其中1码、2码、3码为简码</font>）统计，单字重码率统计如下👇：  
+![20250420232242](https://s2.loli.net/2025/04/20/kc5iWU28GP7BXLh.png)  
+其中重码最多的一个码，重码量为 <font color=red>**91**</font> 码。
+
+作为对比，统计所给样本字的拼音重码率，其中包含共有拼音 <font color=red>**407**</font> 种，单字重码率数据如下👇：  
+![20250420232748](https://s2.loli.net/2025/04/20/QrS2Vg3wLnEblat.png)
+其中重码最多的一个拼音为 <font color=red>**yi**</font>，重量为 <font color=red>**488**</font> 码。
 
 ## 鸣谢
 
