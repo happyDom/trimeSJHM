@@ -1,0 +1,80 @@
+# Rime schema
+# encoding: utf-8
+
+schema:
+  schema_id: sjhm
+  name: "四角号码"
+  version: "0.1"
+  author:
+    - 发明人 王云五先生
+  description: |
+    四角号码	gb2312
+
+switches:
+  - name: ascii_mode
+    reset: 0
+    states: [中文, ASCII]
+  - name: extended_charset
+    reset: 0
+    states: [常用, 增廣]
+  - name: full_shape
+    reset: 0
+    states: [半角, 全角]
+  - name: ascii_punct
+    reset: 0
+    states: [ 。，, ．， ]
+
+engine:
+  processors:
+    - ascii_composer
+    - recognizer
+    - key_binder
+    - speller
+    - punctuator
+    - selector
+    - navigator
+    - express_editor
+  segmentors:
+    - ascii_segmentor
+    - matcher
+    - abc_segmentor
+    - punct_segmentor
+    - fallback_segmentor
+  translators:
+    - punct_translator
+    - table_translator
+
+speller:
+  alphabet: '1234567890*'
+  max_code_length: 6
+  max_phrase_length: 12
+  algebra:
+    - erase/^xx$/
+    - derive/([0-9][0-9][0-9][0-9])[0-9]/~$1*/
+    - derive/([0-9][0-9][0-9])[0-9]([0-9])/$1*$2/
+    - derive/([0-9][0-9])[0-9]([0-9][0-9])/$1*$2/
+    - derive/([0-9])[0-9]([0-9][0-9][0-9])/$1*$2/
+    - derive/([0-9])[0-9][0-9][0-9][0-9]/$1**/
+
+translator:
+  dictionary: sjhm_dyy
+  enable_user_dict: true
+  enable_charset_filter: true
+  enable_sentence: false
+  enable_encoder: true
+  encode_commit_history: true
+  max_phrase_length: 6
+  auto_select_unique_candidate: true
+
+punctuator:
+  import_preset: default
+
+key_binder:
+  import_preset: default
+
+recognizer:
+  import_preset: default
+
+menu:
+  page_size: 10 #候选数量
+  alternative_select_labels: [ ㊀, ㊁, ㊂, ㊃, ㊄, ㊅, ㊆, ㊇, ㊈ ]  #自定义候选序号显示符
