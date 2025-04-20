@@ -1,5 +1,6 @@
 # encoding: utf-8
 # 基于 tongwenfeng.trime.yaml 改制
+# Copyright (C) 2023 yaoyuan.dou <douyaoyuan@126.com>
 
 config_version: "0.0"
 name: dyy四角号码
