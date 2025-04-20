@@ -364,26 +364,26 @@ preset_keyboards:
     width: 16.6
     ascii_mode: 1
     keys:
-      - {click: B, swipe_up: 'A', swipe_down: 'C', swipe_left: '0x', label_symbol: '0x A', hint: 'C'}
-      - {click: click_r0c1_number, long_click: '±', swipe_up: '×', swipe_down: '÷', swipe_left: '%', swipe_right: '-', label_symbol: '% × -', hint: '÷'}
-      - {click: 1, swipe_up: ¹, swipe_down: ₁,label_symbol: ¹, hint: ₁}
-      - {click: 2, swipe_up: ², swipe_down: ₂,label_symbol: ², hint: ₂}
-      - {click: 3, swipe_up: ³, swipe_down: ₃,label_symbol: ³, hint: ₃}
+      - {click: click_r0c0_number, long_click: B, swipe_up: '0x', swipe_down: '//', label_symbol: '0x', hint: '//'}
+      - {click: click_r0c1_number, long_click: '-', swipe_up: '×', swipe_down: '÷', swipe_left: '%', swipe_right: '±', label_symbol: '% × ±', hint: '÷'}
+      - {click: click_r0c2_number, swipe_up: ¹, swipe_down: ₁, swipe_left: '<', swipe_right: '>', label_symbol: '< ¹ >', hint: ₁}
+      - {click: click_r0c3_number, long_click: ':', swipe_up: ², swipe_down: ₂,label_symbol: ², hint: ₂}
+      - {click: click_r0c4_number, swipe_up: ³, swipe_left: '≤', swipe_right: '≥', swipe_down: ₃,label_symbol: '≤ ³ ≥', hint: ₃}
       - {click: BackSpace, key_back_color: bbs, key_text_color: tbs}
 
-      - {click: E, swipe_up: 'D', swipe_down: 'F', swipe_left: '⊕', swipe_right: '⊙', label_symbol: '⊕ D ⊙', hint: 'F'}
-      - {click: '(){Left}', swipe_up: '㏑', swipe_down: '㏒', swipe_left: '[]{Left}', swipe_right: '{}{left}', label_symbol: '[] ㏑ {}', hint: '㏒'}
-      - {click: 4, swipe_up: ⁴, swipe_down: ₄, swipe_left: Home, label_symbol: '⇤ ⁴', hint: ₄}
+      - {click: click_r1c0_number, long_click: D, swipe_up: '∽', swipe_down: '⊥', label_symbol: '∽', hint: '⊥'}
+      - {click: '(){Left}', swipe_up: '㏑', swipe_down: '㏒', swipe_left: '[]{Left}', swipe_right: '{}{Left}', label_symbol: '[] ㏑ {}', hint: '㏒'}
+      - {click: click_r1c2_number, long_click: Home, swipe_up: ⁴, swipe_down: ₄, label_symbol: '⁴', hint: ₄}
       - {click: click_r1c3_number, long_click: '.', swipe_up: ⁵, swipe_down: ₅, label_symbol: ⁵, hint: ₅}
-      - {click: 6, swipe_up: ⁶, swipe_down: ₆, swipe_right: End, label_symbol: '⁶ ⇥', hint: ₆}
-      - {click: click_r1c5_number, long_click: '≡', swipe_up: '≈', swipe_down: '≠', swipe_left: '<', swipe_right: '>', label_symbol: '< ≈ >', hint: '≠'}
+      - {click: click_r1c4_number, long_click: End, swipe_up: ⁶, swipe_down: ₆, label_symbol: '⁶', hint: ₆}
+      - {click: click_r1c5_number, long_click: '≡', swipe_up: '≈', swipe_down: '≠', label_symbol: '≈', hint: '≠'}
 
-      - {click: click_r2c0_number, long_click: '∟', swipe_up: '∽', swipe_down: '≌', swipe_left: '∥', swipe_right: '⊥', label_symbol: '∥ ∽ ⊥', hint: '≌'}
+      - {click: click_r2c0_number, long_click: F, swipe_up: '∠', swipe_down: '∟', label_symbol: '∠', hint: '∟'}
       - {click: click_r2c1_number, long_click: '∴', swipe_up: '∫', swipe_down: '∮', swipe_left: '∑', swipe_right: '∏', label_symbol: '∑ ∫ ∏', hint: '∮'}
       - {click: click_r2c2_number, long_click: select_all, swipe_up: ⁷, swipe_down: ₇, label_symbol: ⁷, hint: ₇}
       - {click: click_r2c3_number, long_click: copy, swipe_up: ⁸, swipe_down: ₈, label_symbol: ⁸, hint: ₈}
       - {click: click_r2c4_number, long_click: paste_clip, swipe_up: ⁹, swipe_down: ₉, label_symbol: ⁹, hint: ₉}
-      - {click: space2, long_click: ',', swipe_up: '∝', swipe_down: '!', swipe_left: '≤', swipe_right: '≥', label_symbol: '≤ ∝ ≥', hint: '!'}
+      - {click: space2, long_click: ',', swipe_up: '∝', swipe_down: '!', label_symbol: '∝', hint: '!'}
 
       - {click: Keyboard_default, width: 33.2, key_back_color: bgn, key_text_color: tgn}
       - {click: click_r3c2_number, long_click: '∞', swipe_up: ⁰, swipe_down: ₀, swipe_left: Left, swipe_right: Right, label_symbol: '←      ⁰      →', hint: ₀, width: 49.8}
@@ -629,7 +629,7 @@ preset_keys:
   BackSpace: {label: '⇦', repeatable: true, functional: false, send: BackSpace}
   space: {repeatable: false, functional: false, label: '____', send: space}
   space1: {repeatable: false, label: '空格', functional: false, send: space}
-  space2: {repeatable: false, label: '空格[,]', functional: false, send: space}
+  space2: {repeatable: false, label: '空格 ,', functional: false, send: space}
   Clear: {label: 清除, send: Clear}
   Escape: {label: 'Esc', functional: false, send: Escape}
   Home: {label: 行首, send: Home, functional: false}
@@ -695,10 +695,17 @@ preset_keys:
   Help: {label: 说明, send: Help}
   Info: {label: 关于, send: INFO}
   
-  click_r0c1_number: {label: '+±', functional: false, text: '+'}
-  click_r1c3_number: {label: '5.', functional: false, text: '5'}
+  click_r0c0_number: {label: 'A B', functional: false, text: 'A'}
+  click_r0c1_number: {label: '+ -', functional: false, text: '+'}
+  click_r0c2_number: {label: '1 ', functional: false, text: '1'}
+  click_r0c3_number: {label: '2 :', functional: false, text: '2'}
+  click_r0c4_number: {label: '3 ', functional: false, text: '3'}
+  click_r1c0_number: {label: 'C D', functional: false, text: 'C'}
+  click_r1c2_number: {label: '4 ⇤', functional: false, text: '4'}
+  click_r1c3_number: {label: '5 .', functional: false, text: '5'}
+  click_r1c4_number: {label: '6 ⇥', functional: false, text: '6'}
   click_r1c5_number: {label: '=≡', functional: false, text: '='}
-  click_r2c0_number: {label: '∠∟', functional: false, text: '∠'}
+  click_r2c0_number: {label: 'E F', functional: false, text: 'E'}
   click_r2c1_number: {label: '∵∴', functional: false, text: '∵'}
   click_r2c2_number: {label: '7全选', functional: false, text: '7'}
   click_r2c3_number: {label: '8复制', functional: false, text: '8'}
