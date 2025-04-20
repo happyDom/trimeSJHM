@@ -89,7 +89,14 @@
 <font color=red>33</font>取码|<font color=red>163608</font>|<font color=red>136655</font>|<font color=red>83.53%</font>
 <font color=red>34</font>取码|<font color=red>163608</font>|<font color=red>156277</font>|<font color=red>95.52%</font>
 
-
-## 鸣谢
+## 特别鸣谢
 
 感谢QQ群友 @夜澜听雨 提供的**四角号码**码表，以及关于**四号号码**拆字的规则说明文档。
+
+## 感谢以下开发者的贡献
+
+![img](https://contrib.rocks/image?repo=happyDom/trimeSJHM&_v=0)
+
+## Star History
+
+[![Star History Chart](https://api.star-history.com/svg?repos=happyDom/trimeSJHM&type=Date)](https://star-history.com/#happyDom/trimeSJHM&Date)
