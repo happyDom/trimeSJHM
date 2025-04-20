@@ -266,7 +266,7 @@ preset_keyboards:
     keyboard_height: 150
     ascii_mode: 0
     keys:
-      - {click: 1, label: '一㇂'}
+      - {click: 1, long_click: Home, swipe_up: Home, label: '一㇂'}
       - {click: 2, label: 'ノ㇚', swipe_up: '@', swipe_down: ':', label_symbol: '@', hint: ':'}
       - {click: 3, label: '㇏乀', swipe_up: ',', swipe_down: '.', swipe_left: '、', swipe_right: '；', label_symbol: '、 ，；', hint: '  。'}
       - {click: 4, label: 'メ', swipe_up: '?', swipe_down: '!', label_symbol: '?', hint: '!'}
@@ -275,7 +275,7 @@ preset_keyboards:
       - {click: 7, label: 'レ乛', swipe_up: '(){Left}', swipe_down: '[]{Left}', label_symbol: '( )', hint: '[ ]'}
       - {click: 8, label: '八丷', swipe_up: '*', swipe_down: '/', label_symbol: '*', hint: '/'}
       - {click: 9, label: '忄小', swipe_up: '+', swipe_down: '-', label_symbol: '+', hint: '-'}
-      - {click: 0, label: '亠'}
+      - {click: 0, long_click: End, swipe_up: End, label: '亠'}
 
       - {click: Keyboard_letters, swipe_up: Menu, swipe_down: Keyboard_number, label_symbol: '方案', hint: '123', width: 15}
       - {click: Keyboard_bqfh, swipe_up: Theme_switch, swipe_down: Color_switch, label_symbol: '主题', hint: '配色', width: 15}
