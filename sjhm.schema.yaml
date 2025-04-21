@@ -51,11 +51,17 @@ speller:
   max_phrase_length: 12
   algebra:
     - erase/^xx$/
-    - derive/([0-9][0-9][0-9][0-9])[0-9]/~$1*/
-    - derive/([0-9][0-9][0-9])[0-9]([0-9])/$1*$2/
-    - derive/([0-9][0-9])[0-9]([0-9][0-9])/$1*$2/
-    - derive/([0-9])[0-9]([0-9][0-9][0-9])/$1*$2/
-    - derive/([0-9])[0-9][0-9][0-9][0-9]/$1**/
+    # 5码的拼写运算
+    - derive/(^\d{3})\d(\d{1})$/$1*$2/
+    - derive/(^\d{2})\d(\d{2})$/$1*$2/
+    - derive/(^\d{1})\d(\d{3})$/$1*$2/
+    - derive/(^\d{1})(\d{4})$/*$2/
+    # 6码的拼写运算
+    - derive/(^\d{4})\d(\d{1})$/$1*$2/
+    - derive/(^\d{3})\d(\d{2})$/$1*$2/
+    - derive/(^\d{2})\d(\d{3})$/$1*$2/
+    - derive/(^\d{1})\d(\d{4})$/$1*$2/
+    - derive/(^\d{1})(\d{5})$/*$2/
 
 translator:
   dictionary: sjhm_dyy
@@ -64,7 +70,7 @@ translator:
   enable_sentence: false
   enable_encoder: true
   encode_commit_history: true
-  max_phrase_length: 6
+  max_phrase_length: 16
   auto_select_unique_candidate: true
 
 punctuator:
