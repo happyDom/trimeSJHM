@@ -263,45 +263,22 @@ preset_keyboards:
   default:
     author: "dyy"
     name: 9宫格键盘
-    width: 10
-    keyboard_height: 150
-    ascii_mode: 0
-    keys:
-      - {click: 1, long_click: Home, swipe_up: Home, label: '一㇂'}
-      - {click: 2, label: 'ノ㇚', swipe_up: '@', swipe_down: ':', label_symbol: '@', hint: ':'}
-      - {click: 3, label: '㇏乀', swipe_up: ',', swipe_down: '.', swipe_left: '、', swipe_right: '；', label_symbol: '、 ，；', hint: '  。'}
-      - {click: 4, label: 'メ', swipe_up: '?', swipe_down: '!', label_symbol: '?', hint: '!'}
-      - {click: 5, label: 'キ', swipe_up: '$', swipe_down: '%', label_symbol: '$', hint: '%'}
-      - {click: 6, label: '囗', swipe_up: '……', swipe_down: Keyboard_standard, label_symbol: '……', hint: '⛶'}
-      - {click: 7, label: 'レ乛', swipe_up: '(){Left}', swipe_down: '[]{Left}', label_symbol: '( )', hint: '[ ]'}
-      - {click: 8, label: '八丷', swipe_up: '*', swipe_down: '/', label_symbol: '*', hint: '/'}
-      - {click: 9, label: '忄小', swipe_up: '+', swipe_down: '-', label_symbol: '+', hint: '-'}
-      - {click: 0, long_click: End, swipe_up: End, label: '亠'}
-
-      - {click: Keyboard_letters, swipe_up: Menu, swipe_down: Keyboard_number, label_symbol: '方案', hint: '123', width: 15}
-      - {click: Keyboard_bqfh, swipe_up: Theme_switch, swipe_down: Color_switch, label_symbol: '主题', hint: '配色', width: 15}
-      - {click: space, swipe_up: copy, swipe_down: paste_clip, swipe_left: Left, swipe_right: Right, label_symbol: '←  复制  →', hint: '粘贴', width: 40}
-      - {click: BackSpace, swipe_up: Escape, swipe_down: Return, label_symbol: 'Esc', hint: '↩', key_back_color: bbs, key_text_color: tbs, width: 30}
-
-  standardKeyBoard:
-    author: "dyy"
-    name: 9宫格键盘
     width: 16.6
     ascii_mode: 0
     keys:
-      - {click: Keyboard_default, swipe_up: select_all, label_symbol: '全选', key_back_color: bgn, key_text_color: tgn}
+      - {click: select_all, swipe_up: Escape, label_symbol: 'Esc', key_back_color: bgn, key_text_color: tgn}
       - {click: '……', swipe_up: '<', swipe_down: '>', swipe_left: '`', swipe_right: '~', label_symbol: '` < ~', hint: '>'}
-      - {click: key1, swipe_up: '(){Left}', swipe_down:'!', label_symbol: '( )', hint: '!'}
-      - {click: key2, swipe_up: '<>{Left}', swipe_down:'@', label_symbol: '< >', hint: '@'}
-      - {click: key3, swipe_up: '[]{Left}', swipe_down:'#', label_symbol: '[ ]', hint: '#'}
+      - {click: key1, swipe_up: '(){Left}', swipe_down: '!', label_symbol: '( )', hint: '!'}
+      - {click: key2, swipe_up: '<>{Left}', swipe_down: '@', label_symbol: '< >', hint: '@'}
+      - {click: key3, swipe_up: '[]{Left}', swipe_down: '#', label_symbol: '[ ]', hint: '#'}
       - {click: BackSpace, swipe_up: '{}{Left}', label_symbol: '{ }', key_back_color: bbs, key_text_color: tbs}
 
-      - {click: copy, swipe_up: Home, label_symbol: '⇤'}
+      - {click: copy, long_click: Home, swipe_up: Home, label_symbol: '⇤'}
       - {click: '/', swipe_up: '|', swipe_down: '\', label_symbol: '|', hint: '\'}
       - {click: key4, swipe_up: '+', swipe_down: '$', label_symbol: '+', hint: '&'}
       - {click: key5, swipe_up: '-', swipe_down: '%', label_symbol: '-', hint: '%'}
       - {click: key6, swipe_up: '*', swipe_down: '^', label_symbol: '*', hint: '^'}
-      - {click: key0, swipe_up: End, swipe_down: '=', label_symbol: '⇥', hint: '＝'}
+      - {click: key0, long_click: End, swipe_up: End, swipe_down: '=', label_symbol: '⇥', hint: '='}
 
       - {click: paste_clip, width: 33.2}
       - {click: key7, swipe_up: ':', swipe_down: '&', label_symbol: ':', hint: '&'}
@@ -312,7 +289,7 @@ preset_keyboards:
       - {click: Keyboard_number, swipe_up: Menu, swipe_down: Keyboard_letters, label_symbol: '方案', hint: 'abc', key_back_color: bgn, key_text_color: tgn}
       - {click: Keyboard_bqfh, swipe_up: Theme_switch, swipe_down: Color_switch, label_symbol: '主题', hint: '配色', key_text_size: "18"}
       - {click: space, swipe_up: undo, swipe_down: redo, swipe_left: Left, swipe_right: Right, label_symbol: '←  撤消  →', hint: '重做', width: 49.8}
-      - {click: Return, swipe_up: Escape, label_symbol: 'Esc', key_back_color: benter, key_text_color: tenter}
+      - {click: Return, key_back_color: benter, key_text_color: tenter}
 
   letters:
     author: "dyy"
@@ -675,7 +652,6 @@ preset_keys:
   #切换键盘
   Keyboard_default: { label: 返回, functional: false, send: Eisu_toggle, select: default }
   Keyboard_letters: { label: ABC, functional: false, send: Eisu_toggle, select: letters }
-  Keyboard_standard: { label: 🖮, functional: false, send: Eisu_toggle, select: standardKeyBoard }
   Keyboard_switch: { label: 键盘, functional: true, send: Eisu_toggle, select: .next }
   Keyboard_number: { label: 123, functional: false, send: Eisu_toggle, select: number }
   Keyboard_symbols: { label: 更多, functional: false, send: Eisu_toggle, select: symbols }
