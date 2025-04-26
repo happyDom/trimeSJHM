@@ -283,7 +283,7 @@ preset_keyboards:
       - {click: paste_clip, width: 33.2}
       - {click: key7, swipe_up: ':', swipe_down: '&', label_symbol: ':', hint: '&'}
       - {click: key8, swipe_up: '""{Left}', swipe_down: '?', label_symbol: '“ ”', hint: '?'}
-      - {click: key9, swipe_up: "''{Left}", swipe_down: '\', label_symbol: '‘ ’', hint: '、'}
+      - {click: key9, swipe_up: "''{Left}", swipe_down: '、', label_symbol: '‘ ’', hint: '、'}
       - {click: ',', swipe_up: ';', swipe_down: '.', label_symbol: ';', hint: '  。'}
 
       - {click: Keyboard_number, swipe_up: Menu, swipe_down: Keyboard_letters, label_symbol: '方案', hint: 'abc', key_back_color: bgn, key_text_color: tgn}
