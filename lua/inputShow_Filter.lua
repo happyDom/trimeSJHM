@@ -30,7 +30,7 @@ local function _inputShow(input, env)
 			-- 3码以内，只出字
 			if inputStrLen == 1 then
 				-- 1码只出一简字
-				if '~' ~= cand.comment:sub(1,1) then
+				if '~' ~= cand.comment:sub(1,1) or '*' == inputStr then
 					yield(cand)
 					
 					candsCnt = candsCnt + 1
