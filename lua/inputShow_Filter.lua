@@ -26,27 +26,38 @@ local function _inputShow(input, env)
 		if inputStrLen > 3 then
 			-- 3码以上才不做处理
 			yield(cand)
-		else
+		elseif utf8String.utf8Len(cand.text) < 2 then
 			-- 3码以内，只出字
-			if inputStrLen == 1 then
-				-- 1码只出一简字
-				if '~' ~= cand.comment:sub(1,1) or '*' == inputStr then
-					yield(cand)
-					
-					candsCnt = candsCnt + 1
-					if candsCnt >= 3 then
-						-- 一简字数量只有3个
+			if '*' == inputStr:sub(1,1) then
+			-- 如果以 * 开头，则1码只出 5 个字，2码只出 20 个字
+				yield(cand)
+				candsCnt = candsCnt + 1
+				if 1 == inputStrLen then
+					if candsCnt >= 5 then
+						break
+					end
+				elseif 2 == inputStrLen then
+					if candsCnt >= 20 then
 						break
 					end
 				end
-			elseif utf8String.utf8Len(cand.text) < 2 then
+			elseif inputStrLen < 3 then
+				-- 1码只出一简字，或二简字
+				if '~' == cand.comment:sub(1,1) then
+					break
+				else
+					yield(cand)
+					candsCnt = candsCnt + 1
+				end
+			else
 				yield(cand)
+				candsCnt = candsCnt + 1
 			end
 		end
 	end
 end
 
-local function inputShow(input, env)	
+local function inputShow(input, env)
 	_inputShow(input,env)
 end
 
