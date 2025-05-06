@@ -1,5 +1,6 @@
 # encoding: utf-8
 # 基于 tongwenfeng.trime.yaml 改制
+# Copyright (C) 2023 yaoyuan.dou <douyaoyuan@126.com>
 
 config_version: "0.0"
 name: dyy四角号码
@@ -274,7 +275,7 @@ preset_keyboards:
 
       - {click: copy, long_click: Home, swipe_up: Home, label_symbol: '⇤'}
       - {click: '/', swipe_up: '|', swipe_down: '\', label_symbol: '|', hint: '\'}
-      - {click: key4, swipe_up: '+', swipe_down: '$', label_symbol: '+', hint: '&'}
+      - {click: key4, swipe_up: '+', swipe_down: '$', label_symbol: '+', hint: '$'}
       - {click: key5, swipe_up: '-', swipe_down: '%', label_symbol: '-', hint: '%'}
       - {click: key6, swipe_up: '*', swipe_down: '^', label_symbol: '*', hint: '^'}
       - {click: key0, long_click: End, swipe_up: End, swipe_down: '=', label_symbol: '⇥', hint: '='}
