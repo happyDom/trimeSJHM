@@ -1,0 +1,10 @@
+# 该方案并不是一个完整的输入法方案
+# 该方案仅是为了将 CharSet.dict.yaml 的内容生成一个 CharSet.prism.bin 文件（棱镜文件）
+
+schema:
+  schema_id: CharSet
+  name: "字集过滤·伪方案"
+
+translator:
+  dictionary: CharSet
+  enable_user_dict: false

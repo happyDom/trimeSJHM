@@ -11,6 +11,10 @@ schema:
   description: |
     四角号码	gb2312
 
+  dependencies:
+    - pinyin_simp
+    - CharSet
+
 switches:
   - name: ascii_mode
     reset: 0
