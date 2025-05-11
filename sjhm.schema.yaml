@@ -51,22 +51,9 @@ engine:
     - table_translator
 
 speller:
-  alphabet: '1234567890*'
+  alphabet: '1234567890'
   max_code_length: 7
   max_phrase_length: 12
-  algebra:
-    - erase/^xx$/
-    # 5码的拼写运算
-    - derive/(^\d{3})\d(\d{1})$/$1*$2/
-    - derive/(^\d{2})\d(\d{2})$/$1*$2/
-    - derive/(^\d{1})\d(\d{3})$/$1*$2/
-    - derive/(^\d{1})(\d{4})$/*$2/
-    # 6码的拼写运算
-    - derive/(^\d{4})\d(\d{1})$/$1*$2/
-    - derive/(^\d{3})\d(\d{2})$/$1*$2/
-    - derive/(^\d{2})\d(\d{3})$/$1*$2/
-    - derive/(^\d{1})\d(\d{4})$/$1*$2/
-    - derive/(^\d{1})(\d{5})$/*$2/
 
 translator:
   dictionary: sjhm_dyy
