@@ -1,5 +1,6 @@
 # 在常规模式下，以下所列字符是允许输出的
 # ₂₀₂₅0510・A：删除不在mt中不显示的字符
+---
 name: CharSet
 version: "₂₀₂₅0510・A"
 sort: original
@@ -6788,7 +6789,6 @@ use_preset_vocabulary: false
 𡗗	t
 𤆵	t
 𫟷	t
-𲍿	t
 々	t
 〇	t
 の	t
