@@ -284,7 +284,7 @@ preset_keyboards:
       - {click: key7, swipe_up: ':', swipe_down: '&', label_symbol: ':', hint: '&'}
       - {click: key8, swipe_up: '""{Left}', swipe_down: '?', label_symbol: '“ ”', hint: '?'}
       - {click: key9, swipe_up: "''{Left}", swipe_down: '、', label_symbol: '‘ ’', hint: '、'}
-      - {click: ',', swipe_up: ';', swipe_down: '.', label_symbol: ';', hint: '  。'}
+      - {click: ',', long_click: '.', swipe_up: ';', label: '，。', label_symbol: ';'}
 
       - {click: Keyboard_number, swipe_up: Menu, swipe_down: Keyboard_letters, label_symbol: '方案', hint: 'abc', key_back_color: bgn, key_text_color: tgn}
       - {click: Keyboard_bqfh, swipe_up: Theme_switch, swipe_down: Color_switch, label_symbol: '主题', hint: '配色', key_text_size: "18"}
