@@ -12,6 +12,7 @@
   - 定义了二字词的组码方式（首字取前 <font color=red>**3**</font> 码，末字取前 <font color=red>**4**</font> 码，一个词语共取 <font color=red>**7**</font> 个码）
   - 定义了单个字的词频信息
   - 定义了二字词以及各词的词频信息
+- 其它文档，提供了对增强功能的支持，例如lua脚本，字符集滤镜，以及反查方案支持等。
 
 ## 使用方法
 
@@ -39,13 +40,18 @@
 ![Snipaste_2025-04-20_22-07-02](https://s2.loli.net/2025/04/20/6DrQgo8FWK43ysS.png)  
 ![Snipaste_2025-04-20_23-20-03](https://s2.loli.net/2025/04/20/XSJGZyMau1lDg7z.png)
 
-## 键盘切换
+## 麻将风皮肤一览
 
-本方案的主键盘是 2行 键盘，如下👇：  
-![6d1eb7128df8049bc5cfea8724bbc62](https://s2.loli.net/2025/04/20/6jx7z4UEyk2bsXG.jpg)
-
-您可以通过下划<font color=red>**口**</font>键（<font color=gray>对应数字 <font color=red>**6**</font></font>）键切换到9宫格键盘，如下👇：  
-![6d1eb7128df8049bc5cfea8724bbc62](https://s2.loli.net/2025/04/20/6jx7z4UEyk2bsXG.jpg)
+- 9宫格主键盘  
+  ![e80dc92226a6fa4e39f8f2a4bff64c1](https://s2.loli.net/2025/05/13/V3xYe9BsKmopfgh.jpg)
+- 数字键盘
+  ![fdbe1d15135eac1c9e8726009e19497](https://s2.loli.net/2025/05/13/Bzwi9avu6fpY4UD.jpg)
+- 标点符号键盘（其一，共有中文标点2页，英文标点1页，共3页）
+  ![aaed595dfcc5135f856ccbde57cbc06](https://s2.loli.net/2025/05/13/TeaVgEbNDMSpmuz.jpg)
+- 快捷符号键盘
+  ![537bdd29c0dccf814dddcb830e613fa](https://s2.loli.net/2025/05/13/8pmbCzDB7JVUQsI.jpg)
+- 26字母键盘（支持输入英文字母，支持拼音反查）
+  ![469df4ca88701e390d0866abcfd649d](https://s2.loli.net/2025/05/13/Uyj8SixWm13o7fs.jpg)
 
 ## 关于 **四角号码** 单字重码率的统计
 
