@@ -18,13 +18,13 @@ schema:
 switches:
   - name: ascii_mode
     reset: 0
-    states: [中文, ASCII]
+    states: [中, abc]
   - name: extended_charset
     reset: 0
-    states: [常用, 增廣]
+    states: [常用, 增广]
   - name: full_shape
     reset: 0
-    states: [半角, 全角]
+    states: [半, 全]
   - name: ascii_punct
     reset: 0
     states: [ 。，, ．， ]
@@ -76,7 +76,7 @@ reverse_lookup:
     - xform/([jqxy])v/$1u/
 
 punctuator:
-  import_preset: default
+  import_preset: symbols
 
 key_binder:
   import_preset: default

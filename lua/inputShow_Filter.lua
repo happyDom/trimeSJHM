@@ -23,8 +23,8 @@ local function _inputShow(input, env)
 	for cand in input:iter() do
 		candsIdx = candsIdx + 1
 		
-		if inputStrLen > 3 then
-			-- 3码以上才不做处理
+		if inputStrLen > 3 or '/' == inputStr:sub(1,1) then
+			-- 3码以上，或者以 / 引导的输入，不做处理
 			yield(cand)
 		elseif utf8String.utf8Len(cand.text) < 2 then
 			-- 3码以内，只出字
