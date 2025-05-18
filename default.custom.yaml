@@ -1,0 +1,8 @@
+patch:
+  menu/+:
+    page_size: 10													# 存在候选词选项时，每一页显示的候选词数量，最大是 10
+    alternative_select_labels: [❶,❷,❸,❹,❺,❻,❼,❽,❾,⓿]		# 修改候选项标识
+  recognizer/patterns/punct: "^/([0-9]0?|[A-Za-z]+)$"  # 标点符号识别模式
+  schema_list:
+    - schema: pinyin_simp
+    - schema: sjhm
