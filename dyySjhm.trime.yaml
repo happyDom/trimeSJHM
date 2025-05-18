@@ -433,12 +433,12 @@ preset_keyboards:
       - {label: '⇄', click: '{Escape}/jt', long_click: '{Escape}/9', swipe_up: '{Escape}/9', label_symbol: '/9'}
       - {label: '¥', click: '{Escape}/hb', long_click: '{Escape}/10', swipe_up: '{Escape}/10', label_symbol: '/10'}
       - {label: '下标', click: '{Escape}/xb', long_click: '{Escape}/sb', swipe_up: '{Escape}/sb', label_symbol: '上标'}
-      - {label: '天体', click: '{Escape}/tt', long_click: '{Escape}/xz', swipe_up: '{Escape}/xz', label_symbol: '♈♋'}
+      - {label: '☼☽', click: '{Escape}/tt', long_click: '{Escape}/xz', swipe_up: '{Escape}/xz', label_symbol: '♈♋'}
       - {label: '#!?', click: Keyboard_bqfh_base, width: 16, key_back_color: bgn}
 
       - {label: 'āō', click: '{Escape}/py', long_click: '{Escape}/0', swipe_up: '{Escape}/0', label_symbol: '/0'}
-      - {label: '『』', click: '{Escape}/bd', long_click: '{Escape}/bdz', swipe_up: '{Escape}/bdz', label_symbol: '竖标'}
-      - {label: '部首', click: '{Escape}/bs', long_click: '{Escape}/pp', swipe_up: '{Escape}/pp', label_symbol: '偏旁'}
+      - {label: '『』', click: '{Escape}/bd', long_click: '{Escape}/bdz', swipe_up: '{Escape}/bdz', label_symbol: '︙﹃'}
+      - {label: '亻刂', click: '{Escape}/bs', long_click: '{Escape}/pp', swipe_up: '{Escape}/pp', label_symbol: '氵卩'}
       - {label: '🀄', click: '{Escape}/mj', long_click: '{Escape}/sz', swipe_up: '{Escape}/sz', label_symbol: '🎲'}
       - {label: '♘', click: '{Escape}/xq', long_click: '{Escape}/pk', swipe_up: '{Escape}/pk', label_symbol: '♠'}
       - {label: 'αβ', click: '{Escape}/xl', long_click: '{Escape}/xld', swipe_up: '{Escape}/xld', label_symbol: 'ΩΦ'}
