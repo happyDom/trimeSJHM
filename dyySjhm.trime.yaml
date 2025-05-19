@@ -315,7 +315,7 @@ preset_keyboards:
       - {click: key4, swipe_up: '+', swipe_down: '$', label_symbol: '+', hint: '$'}
       - {click: key5, swipe_up: '-', swipe_down: '%', label_symbol: '-', hint: '%'}
       - {click: key6, swipe_up: '*', swipe_down: '^', label_symbol: '*', hint: '^'}
-      - {click: key0, long_click: End, swipe_up: End, swipe_down: '=', label_symbol: '⇥', hint: '='}
+      - {click: space, long_click: End, swipe_up: End, swipe_down: '=', label_symbol: '⇥', hint: '='}
 
       - {click: paste_clip1, width: 33.2}
       - {click: key7, swipe_up: ':', swipe_down: '&', label_symbol: ':', hint: '&'}
@@ -325,7 +325,7 @@ preset_keyboards:
 
       - {click: Keyboard_letters, swipe_up: Keyboard_bqfh, swipe_down: Keyboard_number, label_symbol: '⌘', hint: '123', key_back_color: bgn}
       - {click: Menu, swipe_up: Theme_switch, swipe_down: Color_switch, label: '方案', label_symbol: '主题', hint: '配色'}
-      - {click: space, swipe_up: undo, swipe_down: redo, swipe_left: Left, swipe_right: Right, label_symbol: '←  撤消  →', hint: '重做', width: 49.8}
+      - {click: key0, swipe_up: undo, swipe_down: redo, swipe_left: Left, swipe_right: Right, label_symbol: '←  撤消  →', hint: '重做', width: 49.8}
       - {click: Return, key_back_color: benter}
 
   letters:
