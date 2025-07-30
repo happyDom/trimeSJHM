@@ -26,7 +26,7 @@ style:
   background_dim_amount: 0.5
   root_background: keyboard_back_color # 整个键盘区+候选栏的背景图/色
   candidate_font: han.ttf  #候选字体
-  candidate_padding: 5  #候选项内边距
+  candidate_padding: 9  #候选项内边距
   candidate_spacing: 0.5  #候选间距
   candidate_text_size: 18  #候选字号
   candidate_use_cursor: true #高亮候选项
@@ -324,7 +324,7 @@ preset_keyboards:
       - {click: keyDot, long_click: '.', swipe_up: ';', label_symbol: ';'}
 
       - {click: Keyboard_letters, swipe_up: Keyboard_bqfh, swipe_down: Keyboard_number, label_symbol: '⌘', hint: '123', key_back_color: bgn}
-      - {click: Menu, swipe_up: Theme_switch, swipe_down: Color_switch, label: '方案', label_symbol: '主题', hint: '配色'}
+      - {click: keyMenu, swipe_up: Theme_switch, swipe_down: Color_switch, label_symbol: '主题', hint: '配色'}
       - {click: key0, swipe_up: undo, swipe_down: redo, swipe_left: Left, swipe_right: Right, label_symbol: '←  撤消  →', hint: '重做', width: 49.8}
       - {click: Return, key_back_color: benter}
 
@@ -332,7 +332,7 @@ preset_keyboards:
     author: "dyy"
     name: 'ASCII'
     width: 10
-    ascii_mode: 1
+    ascii_mode: 0
     key_text_offset_y: -2
     key_symbol_offset_y: 2
     key_hint_offset_y: -4
@@ -622,6 +622,7 @@ preset_keys:
   redo: {label: 重做, functional: false, send: Control+Shift+z} #>=Android 6.0
   undo: {label: 撤銷, functional: false, send: Control+z} #>=Android 6.0
   delimiter: {label: 分词, text: ''''}
+  keyMenu: {label: '℞',send: Menu, functional: false}
 
   key1: {label: '㇀一㇂', send: 1, functional: false}
   key2: {label: 'ノ丨㇚', send: 2, functional: false}
