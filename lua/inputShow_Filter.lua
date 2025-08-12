@@ -13,6 +13,7 @@ end
 
 local candsCnt = 0
 local candsIdx = -1
+local cands = {}
 
 local function _inputShow(input, env)
 	local inputStr = tostring(env.engine.context.input)
@@ -20,6 +21,7 @@ local function _inputShow(input, env)
 	
 	candsCnt = 0
 	candsIdx = -1
+	cands = {}
 	for cand in input:iter() do
 		candsIdx = candsIdx + 1
 		
@@ -46,13 +48,28 @@ local function _inputShow(input, env)
 				if '~' == cand.comment:sub(1,1) then
 					break
 				else
-					yield(cand)
+					-- yield(cand)
+					table.insert(cands, cand)
 					candsCnt = candsCnt + 1
 				end
 			else
 				yield(cand)
 				candsCnt = candsCnt + 1
 			end
+		end
+	end
+	
+	-- 一简字，二简字排序，以便保持固定的次序
+	if 0 < #cands then
+		table.sort(cands, function(a,b)
+			if a.text > b.text then
+				return false
+			else
+				return true
+			end
+		end)
+		for idx = 1, #cands do
+			yield(cands[idx])
 		end
 	end
 end
