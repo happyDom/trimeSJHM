@@ -9,12 +9,14 @@ columns: # 此字典为纯词典，无单字编码，仅有字/词和字/词频
   - weight # 字/词频
 encoder:
   rules:
-    - length_equal: 2 # 对于 2 字词，采用 34 规则
-      formula: "AaAbAcBaBbBcBd"
-    - length_equal: 3 # 对于 3 字词，采用 124 规则
-      formula: "AaBaBbZaZbZcZd"
-    - length_in_range: [4, 100] # 对于 3 字及以上词，采用 1114 规则
-      formula: "AaBaCaZaZbZcZd"
+    - length_equal: 2 # 对于 2 字词，采用 35 规则：第一字取前3码，第二字取前5码
+      formula: "AaAbAcBaBbBcBdBe"
+    - length_equal: 3 # 对于 3 字词，采用 115 规则：第一、二字各取前1码，第三字取前5码
+      formula: "AaBaZaZbZcZdZe"
+    - length_equal: 4 # 对于 4 字词，采用 1115 规则：第一、二、三字各取前1码，第四字取前5码
+      formula: "AaBaCaZaZbZcZdZe"
+    - length_in_range: [5, 100] # 对于 5 字及以上词，采用 11115 规则：第一、二、三、四字各取前1码，末字取前5码
+      formula: "AaBaCaDaZaZbZcZdZe"
 ...
 鿔	31261
 吖	262101

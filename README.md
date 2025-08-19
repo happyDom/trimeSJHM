@@ -9,9 +9,12 @@
 - <font color=green>sjhm_base.dict.yaml</font>：这是**四角号码**的码表文档，里面收录定义了约 <font color=red>7w5</font> 个汉字及部件的**四角号码**值
 - <font color=green>sjhm_dyy.dict.yaml</font>：这是本方案引用的字典文档，该文档内容如下：
   - 引用了上文的<font color=green>sjhm_base.dict.yaml</font>码表
-  - 定义了二字词的组码方式（首字取前 <font color=red>**3**</font> 码，末字取前 <font color=red>**4**</font> 码，一个词语共取 <font color=red>**7**</font> 个码）
+  - 引用了其它指定的词典
   - 定义了单个字的词频信息
-  - 定义了二字词以及各词的词频信息
+  - 定义了部分词以及各词的词频信息
+  - 定义了打词的取码规则
+  ![Snipaste_2025-08-19_17-49-00](https://s2.loli.net/2025/08/19/FGbMgmNzVn3XaWv.png)
+
 - 其它文档，提供了对增强功能的支持，例如lua脚本，字符集滤镜，以及反查方案支持等。
 
 ## 使用方法
