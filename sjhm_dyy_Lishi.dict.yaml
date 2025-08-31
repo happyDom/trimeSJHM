@@ -1,0 +1,10 @@
+---
+name: sjhm_dyy_Lishi
+version: "0.1"
+sort: by_weight
+columns: # 此字典列出了历史相关的词汇，历史人物，事件，概念等
+  - text # 字/词
+...
+肉喇叭
+喉舌
+官媒

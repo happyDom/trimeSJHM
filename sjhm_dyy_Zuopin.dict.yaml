@@ -1,0 +1,8 @@
+---
+name: sjhm_dyy_Zuopin
+version: "0.0"
+sort: by_weight
+columns:  # 此字典主要收集一些作品名、刊物名称相关的词汇
+- text  # 字/词
+...
+集结号

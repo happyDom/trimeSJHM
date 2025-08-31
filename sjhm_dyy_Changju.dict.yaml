@@ -1,0 +1,13 @@
+---
+name: sjhm_dyy_Changju
+version: "0.0"
+sort: by_weight
+columns:  # 此字典主要收集一些字数较长的俗成的谚语，诗句之类的词汇
+- text  # 字/词
+...
+铁打的营盘
+铁打的营盘流水的兵
+船到江心补漏迟
+隔行如隔山
+所见即所得
+
