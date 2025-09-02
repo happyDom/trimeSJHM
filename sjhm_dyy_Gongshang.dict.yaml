@@ -1,8 +1,9 @@
 ---
-name: sjhm_dyy_Shangye
+name: sjhm_dyy_Gongshang
 version: "0.0"
 sort: by_weight
 columns:  # 此字典收集商业实体名字词汇
 - text  # 字/词
 ...
 良品铺子
+法士特
