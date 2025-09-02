@@ -3,7 +3,7 @@
 # Copyright (C) 2023 yaoyuan.dou <douyaoyuan@126.com>
 
 config_version: "0.0"
-name: dyy四角号码
+name: 四角号码
 author: dyy
 
 #键盘高度
@@ -190,73 +190,6 @@ preset_color_schemes:
     tbs: *color2 #退格键文字颜色
 
   #--------配色开始----------------#
-  ink:
-    name: 墨池／Ink
-    author: 佛振 <chen.sst@gmail.com>
-    text_color: 0xff000000
-    back_color: 0xffffffff
-    border_color: 0xff000000
-    hilited_text_color: 0xff000000
-    hilited_back_color: 0xffdddddd
-    hilited_candidate_text_color: 0xffffffff
-    hilited_candidate_back_color: 0xff000000
-    benter: *color6 #回车键背景色
-    bgn: *color4 #功能键背景色
-    bbs: *color4 #退格键背景色
-
-  dark_temple:
-    name: 暗堂／Dark Temple
-    author: 佛振 <chen.sst@gmail.com>, based on ir_black
-    text_color: 0xffdaf692
-    candidate_text_color: 0xffe6e3d8
-    back_color: 0xff222222
-    border_color: 0xff222222
-    hilited_text_color: 0xff9acfff
-    hilited_back_color: 0xff222222
-    hilited_candidate_text_color: 0xffdaf692
-    hilited_candidate_back_color: 0xff333333
-    comment_text_color: 0xffff6c60
-    benter: 0x75919191 #回车键背景色
-    bgn: 0x75919191 #功能键背景色
-    bbs: 0x75919191 #退格键背景色
-
-  cool_breeze:
-    name: "清風／Cool Breeze"
-    author: "skoj <skoj@qq.com>"
-    text_color: 0xffFF0000
-    back_color: 0xffFBFBFF
-    border_color: 0xffAAAAFF
-    hilited_text_color: 0xffCE0000
-    hilited_back_color: 0xffFBFBFF
-    candidate_text_color: 0xff009100
-    hilited_candidate_text_color: 0xff3A006F
-    hilited_candidate_back_color: 0xffACD6FF
-    benter: 0xA08fffaf #回车键背景色
-    bgn: 0x758fffaf #功能键背景色
-    bbs: 0x758fffaf #退格键背景色
-
-  flypy:
-    # description: |
-    #   小鶴飛揚：白底藍字，紅色標明。
-    #   根據小鶴雙拼官網圖片製作
-    #   http://www.flypy.com/images/mr.png
-    name: "小鶴飛揚／flypy"
-    author: "Pal.lxk <Pal.lxk@gmail.com>"
-    text_color: 0xff000000
-    back_color: 0xffffffff
-    border_color: 0xffc6c6c6
-    label_color: 0xff0080ff
-    hilited_text_color: 0xff0080ff
-    hilited_back_color: 0xffffffff
-    candidate_text_color: 0xff0080ff
-    comment_text_color: 0xff0080ff
-    hilited_candidate_text_color: 0xffb00000
-    hilited_comment_text_color: 0xffb00000
-    hilited_candidate_back_color: 0xffffffff
-    benter: 0x75bce8ff #回车键背景色
-    bgn: 0x75bce8ff #功能键背景色
-    bbs: 0x75bce8ff #退格键背景色
-
   maJiangFeng:
     # description: |
     #   麻将：麻将背景色
