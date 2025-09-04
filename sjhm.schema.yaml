@@ -27,7 +27,7 @@ switches:
     states: [半, 全]
   - name: ascii_punct
     reset: 0
-    states: [ 。，, ．， ]
+    states: [ 。，, ．, ]
 
 engine:
   processors:
@@ -52,8 +52,8 @@ engine:
 
 speller:
   alphabet: '1234567890'
-  max_code_length: 7
-  max_phrase_length: 12
+  max_code_length: 13
+  max_phrase_length: 13
 
 translator:
   dictionary: sjhm_dyy
@@ -62,7 +62,7 @@ translator:
   enable_sentence: false
   enable_encoder: true
   encode_commit_history: true
-  max_phrase_length: 8
+  max_phrase_length: 7
   auto_select_unique_candidate: true
 
 reverse_lookup:
