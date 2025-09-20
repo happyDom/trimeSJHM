@@ -18,7 +18,7 @@ schema:
 switches:
   - name: ascii_mode
     reset: 0
-    states: [中, abc]
+    states: [中, Abc]
   - name: extended_charset
     reset: 0
     states: [常用, 增广]
@@ -27,7 +27,7 @@ switches:
     states: [半, 全]
   - name: ascii_punct
     reset: 0
-    states: [ 。，, ．, ]
+    states: [ "。", "."]
 
 engine:
   processors:
@@ -84,9 +84,9 @@ key_binder:
 recognizer:
   import_preset: default
   patterns:
-    punct: '^/([0-9]0?|[A-Za-z]+)$'
+    punct: '^/([0-9+\-*/，,。\.\(\)\^]+|[A-Za-z]+)$'				# 识别 + - * / 和 ( ) 是为了实现简易计算器
     reverse_lookup: "^z[a-z]*'?$"
 
 menu:
-  page_size: 10 #候选数量
-  alternative_select_labels: [ ㊀, ㊁, ㊂, ㊃, ㊄, ㊅, ㊆, ㊇, ㊈ ]  #自定义候选序号显示符
+  page_size: 5 #候选数量
+  alternative_select_labels: [ 〡, 〢, 〣, 〤, 〥, 〦, 〧, 〨, 〩]  #自定义候选序号显示符

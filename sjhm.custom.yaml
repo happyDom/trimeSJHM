@@ -3,7 +3,10 @@
 
 patch:
   engine/translators/+:				#定制translator如下
-    - lua_translator@*force_gc          # 暴力 GC 降低内存
+    - table_translator@custom_phrase				# 指定使用 custom_phrase 进行输入字符的翻译
+    - lua_translator@*input_statistics				# 统计输入速度等信息
+    - lua_translator@*simpleCalculator				# 简单计算器
+    - lua_translator@*force_gc          			# 暴力 GC 降低内存
   engine/filters:									# 设置以下filter
     - simplifier
     - lua_filter@*CharSet_Filter					# 字符集过滤滤镜

@@ -25,7 +25,7 @@ style:
   auto_caps: false #自動句首大寫:true|false|ascii
   background_dim_amount: 0.5
   root_background: keyboard_back_color # 整个键盘区+候选栏的背景图/色
-  candidate_font: han.ttf  #候选字体
+  candidate_font: [MiSansRegular.ttf, MiSansL3.ttf]  #候选字体
   candidate_padding: 9  #候选项内边距
   candidate_spacing: 0.5  #候选间距
   candidate_text_size: 18  #候选字号
@@ -225,6 +225,23 @@ preset_color_schemes:
     bbs: maJiang/light/Key.bbs.9.png #退格键背景色
 #--------配色结束----------------#
 
+liquid_keyboard:
+  clipboard:
+    name: "剪贴"
+    type: CLIPBOARD
+  collection:
+    name: "收藏"
+    type: COLLECTION
+  fixed_key_bar:
+    width: 30
+    keys: [liquid_keyboard_exit, space1, Return2, BackSpace2]
+    position: bottom
+  key_height: 40
+  key_height_land: 40
+  keyboards:
+    - clipboard
+    - collection
+
 #键盘布局
 preset_keyboards:
   default:
@@ -236,25 +253,23 @@ preset_keyboards:
     key_symbol_offset_y: 2
     key_hint_offset_y: -4
     keys:
-      - {click: select_all, swipe_up: Escape, label_symbol: 'Esc', key_back_color: bgn}
-      - {click: '……', swipe_up: '<', swipe_down: '>', swipe_left: '`', swipe_right: '~', label_symbol: '` < ~', hint: '>'}
-      - {click: key1, swipe_up: '（）{Left}', swipe_down: '!', label_symbol: '（）', hint: '!'}
-      - {click: key2, swipe_up: '《》{Left}', swipe_down: '@', label_symbol: '《》', hint: '@'}
-      - {click: key3, swipe_up: '「」{Left}', swipe_down: '#', label_symbol: '「」', hint: '#'}
+      - {click: copyAndSelectAll, long_click: select_all, swipe_up: Escape, swipe_down: '……', swipe_right: '~', label_symbol: 'Esc ~', hint: '……', key_back_color: bgn}
+      - {click: key1, swipe_up: '(){Left}', swipe_down: '!', label_symbol: '（）', hint: '!', width: 22.2}
+      - {click: key2, swipe_up: '《》{Left}', swipe_down: '@', label_symbol: '《》', hint: '@', width: 22.2}
+      - {click: key3, swipe_up: '「」{Left}', swipe_down: '#', label_symbol: '「」', hint: '#', width: 22.2}
       - {click: BackSpace, swipe_up: '『』{Left}', label_symbol: '『 』', key_back_color: bbs}
 
-      - {click: copy, long_click: Home, swipe_up: Home, label_symbol: '⇤'}
-      - {click: '/', swipe_up: '|', swipe_down: '﹨', label_symbol: '|', hint: '﹨'}
-      - {click: key4, swipe_up: '+', swipe_down: '$', label_symbol: '+', hint: '$'}
-      - {click: key5, swipe_up: '-', swipe_down: '%', label_symbol: '-', hint: '%'}
-      - {click: key6, swipe_up: '*', swipe_down: '^', label_symbol: '*', hint: '^'}
+      - {click: '/', long_click: Home, swipe_up: Home, swipe_down: '\', label_symbol: '⇤', hint: '\'}
+      - {click: key4, swipe_up: '+', swipe_down: '$', label_symbol: '+', hint: '$', width: 22.2}
+      - {click: key5, swipe_up: '-', swipe_down: '%', label_symbol: '-', hint: '%', width: 22.2}
+      - {click: key6, swipe_up: '*', swipe_down: '^', label_symbol: '*', hint: '^', width: 22.2}
       - {click: space, long_click: End, swipe_up: End, swipe_down: '=', label_symbol: '⇥', hint: '='}
 
-      - {click: paste_clip1, width: 33.2}
-      - {click: key7, swipe_up: ':', swipe_down: '&', label_symbol: ':', hint: '&'}
-      - {click: key8, swipe_up: '“”{Left}', swipe_down: '?', label_symbol: '“ ”', hint: '?'}
-      - {click: key9, swipe_up: '‘’{Left}', swipe_down: '、', label_symbol: '‘ ’', hint: '、'}
-      - {click: keyDot, long_click: '.', swipe_up: ';', label_symbol: ';'}
+      - {click: paste_clip, swipe_up: '|', swipe_down: '<', label_symbol: '|', hint: '<'}
+      - {click: key7, swipe_up: ':', swipe_down: '&', label_symbol: ':', hint: '&', width: 22.2}
+      - {click: key8, swipe_up: '“”{Left}', swipe_down: '?', label_symbol: '“ ”', hint: '?', width: 22.2}
+      - {click: key9, swipe_up: '‘’{Left}', swipe_down: '、', label_symbol: '‘ ’', hint: '、', width: 22.2}
+      - {click: keyDot, long_click: '.', swipe_up: ';', swipe_down: '>', label_symbol: ';', hint: '>'}
 
       - {click: Keyboard_letters, swipe_up: Keyboard_bqfh, swipe_down: Keyboard_number, label_symbol: '⌘', hint: '123', key_back_color: bgn}
       - {click: keyMenu, swipe_up: Theme_switch, swipe_down: Color_switch, label_symbol: '主题', hint: '配色'}
@@ -317,8 +332,8 @@ preset_keyboards:
     key_symbol_offset_y: 2
     key_hint_offset_y: -4
     keys:
-      - {click: click_r0c0_number, long_click: B, swipe_up: '0x', swipe_down: '//', label_symbol: '0x', hint: '//'}
-      - {click: click_r0c1_number, long_click: '-', swipe_up: '×', swipe_down: '÷', swipe_left: '%', swipe_right: '±', label_symbol: '% × ±', hint: '÷'}
+      - {click: click_r0c0_number, long_click: B, swipe_up: '0x', swipe_right: '^', label_symbol: '0x ^'}
+      - {click: click_r0c1_number, long_click: '-', swipe_up: '*', swipe_down: '/', swipe_left: '%', swipe_right: '±', label_symbol: '% * ±', hint: '/'}
       - {click: click_r0c2_number, swipe_up: ¹, swipe_down: ₁, swipe_left: '<', swipe_right: '>', label_symbol: '< ¹ >', hint: ₁}
       - {click: click_r0c3_number, long_click: ':', swipe_up: ², swipe_down: ₂,label_symbol: ², hint: ₂}
       - {click: click_r0c4_number, swipe_up: ³, swipe_left: '≤', swipe_right: '≥', swipe_down: ₃,label_symbol: '≤ ³ ≥', hint: ₃}
@@ -527,11 +542,13 @@ preset_keys:
   # 编辑
   Shift_L: {label: ⇪, preview: '⇪', functional: false, send: Shift_L}
   Return: { label: enter_labels, preview: '↩', functional: false, send: Return }
+  Return2: { label: "   ↲   ", send: Return}
   Hide: {label: 隐藏, send: BACK}
   BackSpace: {label: '⇦', repeatable: true, functional: false, send: BackSpace}
-  space: {repeatable: false, functional: false, label: '____', send: space}
-  space1: {repeatable: false, label: '空格', functional: false, send: space}
-  space2: {repeatable: false, label: '空格 ,', functional: false, send: space}
+  BackSpace2: {label: '   ⇦   ', repeatable: true, functional: false, send: BackSpace}
+  space: {repeatable: false, functional: false, label: '  ␣  ', send: space}
+  space1: {repeatable: false, label: '   ␣   ', functional: false, send: space}
+  space2: {repeatable: false, label: ' ␣  ,', functional: false, send: space}
   Clear: {label: 清除, send: Clear}
   Escape: {label: 'Esc', functional: false, send: Escape}
   Home: {label: 行首, send: Home, functional: false}
@@ -547,9 +564,9 @@ preset_keys:
   select_all: {label: 全选, functional: false, send: Control+a}
   cut: {label: 剪切, functional: false, send: Control+x}
   copy: {label: 复制, functional: false, send: Control+c}
+  copyAndSelectAll: {label: '复/全', functional: false, send: Control+c}
   paste: {label: 粘贴, functional: false, send: Control+v}
   paste_clip: {label: 粘贴, functional: false, send: function, command: clipboard}
-  paste_clip1: {label: '粘       贴', functional: false, send: function, command: clipboard}
   paste_text: {label: 貼上文本, send: Control+Shift+Alt+v} #>=Android 6.0
   share_text: {label: 分享文本, send: Control+Alt+s} #>=Android 6.0
   redo: {label: 重做, functional: false, send: Control+Shift+z} #>=Android 6.0
@@ -557,16 +574,27 @@ preset_keys:
   delimiter: {label: 分词, text: ''''}
   keyMenu: {label: '℞',send: Menu, functional: false}
 
-  key1: {label: '㇀一㇂', send: 1, functional: false}
-  key2: {label: 'ノ丨㇚', send: 2, functional: false}
-  key3: {label: '丶㇏乀', send: 3, functional: false}
-  key4: {label: '十乂メ', send: 4, functional: false}
-  key5: {label: '扌龶キ', send: 5, functional: false}
-  key6: {label: '口 囗', send: 6, functional: false}
-  key7: {label: '∟レ乛', send: 7, functional: false}
-  key8: {label: '八  丷', send: 8, functional: false}
-  key9: {label: '忄氺⺌', send: 9, functional: false}
-  key0: {label: '亠', send: 0, functional: false}
+  key11: {label: '㇀一㇂', send: 1, functional: false}
+  key21: {label: 'ノ丨㇚', send: 2, functional: false}
+  key31: {label: '丶㇏乀', send: 3, functional: false}
+  key41: {label: '十乂メ', send: 4, functional: false}
+  key51: {label: '扌龶キ', send: 5, functional: false}
+  key61: {label: '口 囗', send: 6, functional: false}
+  key71: {label: '∟レ乛', send: 7, functional: false}
+  key81: {label: '八  丷', send: 8, functional: false}
+  key91: {label: '忄氺⺌', send: 9, functional: false}
+  key01: {label: '亠', send: 0, functional: false}
+  key1: {label: '☱', send: 1, functional: false}
+  key2: {label: '☰', send: 2, functional: false}
+  key3: {label: '☴', send: 3, functional: false}
+  key4: {label: '☲', send: 4, functional: false}
+  key5: {label: '☯', send: 5, functional: false}
+  key6: {label: '☵', send: 6, functional: false}
+  key7: {label: '☳', send: 7, functional: false}
+  key8: {label: '☷', send: 8, functional: false}
+  key9: {label: '☶', send: 9, functional: false}
+  key0: {label: '◕‿◕', send: 0, functional: false}
+  key02: {label: '🇨🇳', send: 0, functional: false}
   keyDot: {label: '，。', send: ',', functional: false}
 
   # rime组合键
@@ -578,6 +606,8 @@ preset_keys:
   DeleteCandidate: {label: 删词, send: Control+Delete, functional: false}
   #切换键盘
   Keyboard_default: { label: 返回, functional: false, send: Eisu_toggle, select: default }
+  liquid_keyboard_exit: { command: liquid_keyboard, label: "    ⇬    ", option: "-1", send: function }
+  liquid_keyboard_collection: { command: liquid_keyboard, label: "收藏", option: "收藏", send: function }
   Keyboard_letters: { label: ABC, functional: false, send: Eisu_toggle, select: letters }
   Keyboard_switch: { label: 键盘, functional: true, send: Eisu_toggle, select: .next }
   Keyboard_number: { label: 123, functional: false, send: Eisu_toggle, select: number }
@@ -623,3 +653,12 @@ preset_keys:
   Keyboard_bqfh1: {label: '上页', functional: false, send: Eisu_toggle, select: bqfh1}
   Keyboard_bqfh2: {label: '下页', functional: false, send: Eisu_toggle, select: bqfh2}
   Keyboard_bqfh_En: {label: "英文", functional: false, send: Eisu_toggle, select: bqfh3}
+
+# 工具栏
+tool_bar:
+  button_spacing: 5
+  buttons:
+    - {action: Hide, foreground: {bg_normal: candidate_text_color, style: "ic@keyboard_close"}}
+    - {action: liquid_keyboard_collection, foreground: {style: "★"}}
+    - {action: Mode_switch, foreground: {font_size: 18, option_styles: [En, 中], padding: 10}}
+    - {action: Charset_switch, foreground: {font_size: 18, option_styles: [增, 常], padding: 10}}
