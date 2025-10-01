@@ -4,16 +4,7 @@ version: "0.1"
 sort: by_weight
 import_tables:
   - sjhm_base 					# 单字码表
-  - sjhm_dyy_Yiyao				# 医药概念词汇
-  - sjhm_dyy_Shuliang			# 数量 计量 相关词汇
-  - sjhm_dyy_Dili				# 行政区划及地理概念相关的词汇
-  - sjhm_dyy_Baijiaxing			# 基于常用姓氏的通用称呼
-  - sjhm_dyy_Shizheng			# 历史人物，事件，概念，以及政治、行政等相关词汇
-  - sjhm_dyy_Xingming			# 人名相关的词汇
-  - sjhm_dyy_Zuopin				# 作品名、刊物名称相关的词汇
-  - sjhm_dyy_Changju			# 字数较长的俗成的谚语，诗句之类的词汇
-  - sjhm_dyy_Gongshang			# 工商实体名称相关词汇
-  - sjhm_dyy_Guizeci			# 存在一定泛化规则的词，主要是一些程度词+形容词/副词组成
+  - sjhm_words				# 词语表
 columns: # 此字典为纯词典，无单字编码，仅有字/词和字/词频
   - text 	# 字/词
   - weight 	# 字/词频
