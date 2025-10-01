@@ -272,9 +272,8 @@ preset_keyboards:
       - {click: keyDot, long_click: '.', swipe_up: ';', swipe_down: '>', label_symbol: ';', hint: '>'}
 
       - {click: Keyboard_letters, swipe_up: Keyboard_bqfh, swipe_down: Keyboard_number, label_symbol: '⌘', hint: '123', key_back_color: bgn}
-      - {click: keyMenu, swipe_up: Theme_switch, swipe_down: Color_switch, label_symbol: '主题', hint: '配色'}
-      - {click: key0, swipe_up: undo, swipe_down: redo, swipe_left: Left, swipe_right: Right, label_symbol: '←  撤消  →', hint: '重做', width: 49.8}
-      - {click: Return, key_back_color: benter}
+      - {click: key0, swipe_up: undo, swipe_down: redo, swipe_left: Left, swipe_right: Right, label_symbol: '←  撤消  →', hint: '重做', width: 66.4}
+      - {click: Return3, long_click: keyMenu, swipe_up: Theme_switch, swipe_down: Color_switch, label_symbol: '主题', hint: '配色', key_back_color: benter}
 
   letters:
     author: "dyy"
@@ -321,7 +320,7 @@ preset_keyboards:
       - {click: ',', swipe_up: ';', label_symbol: ';'}
       - {click: space, swipe_up: undo, swipe_down: redo, swipe_left: Left, swipe_right: Right, label_symbol: '←     撤消     →', hint: 重做, width: 30}
       - {click: '.', label: '。', swipe_up: '?', label_symbol: '?'}
-      - {click: Return, swipe_up: Escape, label_symbol: 'Esc', width: 25, key_back_color: benter}
+      - {click: Return2, swipe_up: Escape, label_symbol: 'Esc', width: 25, key_back_color: benter}
 
   number:
     author: "dyy"
@@ -355,7 +354,7 @@ preset_keyboards:
 
       - {click: Keyboard_default, swipe_up: Keyboard_bqfh, swipe_down: Keyboard_letters, label_symbol: '⌘', hint: 'abc', width: 33.2, key_back_color: bgn}
       - {click: click_r3c2_number, long_click: '∞', swipe_up: ⁰, swipe_down: ₀, swipe_left: Left, swipe_right: Right, label_symbol: '←      ⁰      →', hint: ₀, width: 49.8}
-      - {click: Return, swipe_up: Escape, label_symbol: 'Esc', key_back_color: benter}
+      - {click: Return2, swipe_up: Escape, label_symbol: 'Esc', key_back_color: benter}
 
 #符号键盘之二
   symbols:
@@ -398,7 +397,7 @@ preset_keyboards:
       - {label: '㋀', click: '{Escape}/yf', long_click: '{Escape}/rq', swipe_up: '{Escape}/rq', label_symbol: '㏠'}
       - {label: '🕗', click: '{Escape}/zb', long_click: '{Escape}/sj', swipe_up: '{Escape}/sj', label_symbol: '㍙ ㍛'}
       - {label: '进度', click: '{Escape}/jd', long_click: '{Escape}/tj', swipe_up: '{Escape}/tj', label_symbol: '推荐'}
-      - {click: Return, swipe_up: Escape, label_symbol: 'Esc', width: 28, key_back_color: benter}
+      - {click: Return2, swipe_up: Escape, label_symbol: 'Esc', width: 28, key_back_color: benter}
 
   bqfh1:
     author: "风花絮"
@@ -543,6 +542,7 @@ preset_keys:
   Shift_L: {label: ⇪, preview: '⇪', functional: false, send: Shift_L}
   Return: { label: enter_labels, preview: '↩', functional: false, send: Return }
   Return2: { label: "   ↲   ", send: Return}
+  Return3: { label: "↲ ℞", functional: false, send: Return}
   Hide: {label: 隐藏, send: BACK}
   BackSpace: {label: '⇦', repeatable: true, functional: false, send: BackSpace}
   BackSpace2: {label: '   ⇦   ', repeatable: true, functional: false, send: BackSpace}
