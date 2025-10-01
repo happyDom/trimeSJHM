@@ -247,7 +247,7 @@
 
 看附图sjftj904A。
 
-【注意】又旁和又字印刷体汉字笔形有问题，<font color=red>身</font>字和<font color=red>身旁</font>笔形不一样  <font color=red>冒</font>字上边帽字的右上角的笔形有问题，根本不是方块6，<font color=red>鬥</font>字12码不是角7，但多年传统地取<font color=red>冒</font>字上边为方块6，<font color=red>鬥</font>字12码为77了。
+【注意】<font color=red>又</font>旁和<font color=red>又</font>字印刷体汉字笔形有问题，<font color=red>身</font>字和<font color=red>身旁</font>笔形不一样  <font color=red>冒</font>字上边帽字的右上角的笔形有问题，根本不是方块6，<font color=red>鬥</font>字12码不是角7，但多年传统地取<font color=red>冒</font>字上边为方块6，<font color=red>鬥</font>字12码为77了。
 
 ### 【第二.12条】有'口，'门'，'鬥'，'門'框架的字，12码分别为60、37、77、77，而34码取框架里面的笔形。见下面的例子。但是，字里在'口'、'门'、'鬥'、'門'四种框架以外还有其他笔形，不在框架内取码。例如
 

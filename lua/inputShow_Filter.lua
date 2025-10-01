@@ -47,11 +47,7 @@ local function _inputShow(input, env)
 	-- 一简字，二简字排序，以便保持固定的次序
 	if 0 < #cands then
 		table.sort(cands, function(a,b)
-			if a.text > b.text then
-				return false
-			else
-				return true
-			end
+			return (b.text > a.text)
 		end)
 		for idx = 1, #cands do
 			yield(cands[idx])

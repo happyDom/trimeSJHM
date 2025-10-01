@@ -12,11 +12,11 @@
   recognizer/patterns/punct: '^/([0-9]+|[A-Za-z]+)$'
 
 使用提示：
-/01	 查看日统计
-/02  查看周统计
-/03  查看月统计
-/04	 查看年统计
-/009 清除统计数据
+/01 /rtj	 查看日统计
+/02 /ztj	 查看周统计
+/03 /ytj	 查看月统计
+/04 /ntj	 查看年统计
+/009 /qctj	 清除统计数据
 ]]
 
 -- 输入方案名称
@@ -54,7 +54,7 @@ end
 
 -- 判断是否是统计命令
 local function is_summary_command(text)
-    return text == "/01" or text == "/02" or text == "/03" or text == "/04"
+    return text == "/01" or text == "/rtj" or text == "/02" or text == "/ztj" or text == "/03" or text == "/ytj" or text == "/04" or text == "/ntj"
 end
 
 -- 更新统计数据
@@ -198,15 +198,15 @@ end
 local function translator(input, seg, env)
     if input:sub(1, 1) ~= "/" then return end
     local summary = ""
-    if input == "/01" then
+    if input == "/01" or input == "/rtj" then
         summary = format_daily_summary()
-    elseif input == "/02" then
+    elseif input == "/02" or input == "/ztj" then
         summary = format_weekly_summary()
-    elseif input == "/03" then
+    elseif input == "/03" or input == "/ytj" then
         summary = format_monthly_summary()
-    elseif input == "/04" then
+    elseif input == "/04" or input == "/ntj" then
         summary = format_yearly_summary()
-    elseif input == "/009" then
+    elseif input == "/009" or input == "/qctj" then
         input_stats = {
             daily = {count = 0, length = 0, fastest = 0, ts = 0},
             weekly = {count = 0, length = 0, fastest = 0, ts = 0},
