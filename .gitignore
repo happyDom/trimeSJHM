@@ -3,6 +3,9 @@ autoCommitLog.txt
 autoGitCommit.bat
 autoCommitLnks/*.lnk
 
+#不跟踪zip文档
+*.zip
+
 #版本控制动态文件，getGitVer.cs文件用于在C#工程生成前同步git库版本信息，
 #所以为了避免版本信息的变动对C#项目带来的额外变动干扰，git对该文件不进行追踪
 # 屏蔽版本控制相关服务文件
