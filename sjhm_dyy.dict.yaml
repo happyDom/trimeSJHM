@@ -1,6 +1,6 @@
 ---
 name: sjhm_dyy
-version: "0.1"
+version: "2.0"
 sort: by_weight
 import_tables:
   - sjhm_base 				# 单字码表
@@ -10,8 +10,8 @@ columns: # 此字典为字频字典，仅列出了字的字频值
   - weight 	# 字/词频
 encoder:
   rules:
-    - length_equal: 2 # 对于 2 字词，采用 35 规则：第一字取前3码，第二字取前5码
-      formula: "AaAbAcBaBbBcBdBe"
+    - length_equal: 2 # 对于 2 字词，采用 344' 规则：第一字取前3码，第二字取前4码，第一字第四码
+      formula: "AaAbAcBaBbBcBdAd"
     - length_equal: 3 # 对于 3 字词，取前2字各第1码，取末字第1、2、3、4码，取前2字各第3码，取第末字第5码及后续码
       formula: "AaBaZaZbZcZdAcBcZeZf"
     - length_in_range: [4, 100] # 对于 4 及以上 字词，取前4字各第1码，取末字第1、2、3、4码，取前4字各第3码，取第末字第5码及后续码
