@@ -13,9 +13,9 @@ encoder:
     - length_equal: 2 # 对于 2 字词，采用 344' 规则：第一字取前3码，第二字取前4码，第一字第四码
       formula: "AaAbAcBaBbBcBdAd"
     - length_equal: 3 # 对于 3 字词，取前2字各第1码，取末字第1、2、3、4码，取前2字各第3码，取第末字第5码及后续码
-      formula: "AaBaZaZbZcZdAcBcZeZf"
+      formula: "AaBaZaZbZcAcBcZd"
     - length_in_range: [4, 100] # 对于 4 及以上 字词，取前4字各第1码，取末字第1、2、3、4码，取前4字各第3码，取第末字第5码及后续码
-      formula: "AaBaCaZaZbZcZdAcBcCcZeZf"
+      formula: "AaBaCaZaZbZcAcBcCcZd"
 ...
 工	99454797
 了	1477224452
