@@ -617,11 +617,12 @@ preset_keys:
   Keyboard_last: { label: 后退, functional: false, send: Eisu_toggle, select: .last }
   Keyboard_last_lock: { label: 返回, send: Eisu_toggle, select: .last_lock } #直接切換到下一键盘
   # rime状态
-  Mode_switch: {toggle: ascii_mode, functional: false, send: Mode_switch, states: [ 中文, 西文 ]}
-  Half_Whole: {toggle: full_shape, send: Mode_switch, states: [ 半角, 全角 ]}
-  Henkan: {toggle: simplification, send: Mode_switch, states: [ 汉字, 漢字]}
-  Charset_switch: {toggle: extended_charset, send: Mode_switch, states: [ 常用, 增广 ]}
-  Punct_switch: {toggle: ascii_punct, send: Mode_switch, states: [ 。，, ．， ]}
+  Mode_switch: {toggle: ascii_mode, functional: false, send: Mode_switch, states: [中文, 西文]}
+  Half_Whole: {toggle: full_shape, send: Mode_switch, states: [半角, 全角]}
+  Henkan: {toggle: simplification, send: Mode_switch, states: [汉字, 漢字]}
+  Charset_switch: {toggle: extended_charset, send: Mode_switch, states: [常用, 增广]}
+  Punct_switch: {toggle: ascii_punct, send: Mode_switch, states: [。，, ．，]}
+  Phrase_Replace: {toggle: phraseReplace, send: Mode_switch, states: [Off, 👙]}
   # trime设置
   Schema_switch: {label: 下一方案, functional: false, send: Control+Shift+1}
   Theme_switch: {send: SETTINGS, option: "theme"}
@@ -660,5 +661,7 @@ tool_bar:
   buttons:
     - {action: Hide, foreground: {bg_normal: candidate_text_color, style: "ic@keyboard_close"}}
     - {action: liquid_keyboard_collection, foreground: {style: "★"}}
-    - {action: Mode_switch, foreground: {font_size: 18, option_styles: [En, 中], padding: 10}}
-    - {action: Charset_switch, foreground: {font_size: 18, option_styles: [增, 常], padding: 10}}
+    - {action: Punct_switch, foreground: {font_size: 18, option_styles: [。, ．], padding: 10}}
+    - {action: Phrase_Replace, foreground: {font_size: 18, option_styles: [Off, 👙], padding: 10}}
+    - {action: Charset_switch, foreground: {font_size: 18, option_styles: [常, 增], padding: 10}}
+    - {action: Mode_switch, foreground: {font_size: 18, option_styles: [中, En], padding: 10}}
