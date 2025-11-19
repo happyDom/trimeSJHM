@@ -145,13 +145,28 @@ local function save_stats()
     file:close()
 end
 
--- 显示函数（以日统计为例）
+-- 显示函数（日统计）
 local function format_daily_summary()
     local s = input_stats.daily
     if s.count == 0 then return "※ 今天没有任何记录。" end
+
+    local val1 = input_stats.lengths[1] or 0  -- 防止索引不存在时报错，默认0
+    local val2 = (input_stats.lengths[2] or 0) * 2
+    local val3 = 0
+    local total = 0
+    for key, value in pairs(input_stats.lengths) do
+        total = total + key * value  -- 累加所有值
+    end
+    if total == 0 then total = 1 end  -- 防止除以0报错
+    val3 = total - val1 - val2
+    local ratio1 = (val1 / total) * 100
+    local ratio2 = (val2 / total) * 100
+    local ratio3 = (val3 / total) * 100
+
     return string.format(
-        "※ 今天的统计：\n%s\n◉ 今天\n共上屏[%d]次\n共输入[%d]字\n最快一分钟输入了[%d]字\n%s\n◉ 方案：%s\n◉ 平台：%s %s\n%s",
+        "※ 今天的统计：\n%s\n◉ 今天\n共上屏[%d]次\n共输入[%d]字\n最快一分钟输入了[%d]字\n%s\n单字占比:%.2f%%\n2字占比:%.2f%%\n其它占比:%.2f%%\n%s\n◉ 方案：%s\n◉ 平台：%s %s\n%s",
         string.rep("─", 14), s.count, s.length, s.fastest,
+        string.rep("─", 14),ratio1,ratio2,ratio3,
         string.rep("─", 14), schema_name, software_name, software_version,
         string.rep("─", 14))
 end
@@ -265,9 +280,8 @@ local function init(env)
         -- 排除统计候选上屏内容（例如 "※ 今天..." 或 "◉ 本年..."）
         if commit_text:match("^[※◉]") then return end
 
-        -- 排除我们自己生成的统计候选（comment 是 "input_stats_summary"）
-      --  local cand = ctx:get_selected_candidate()
-       -- if cand and cand.comment == "input_stats_summary" then return end
+        -- 如果是标点符号，则不进行统计
+        if commit_text:match("[！!@#$％^&?,.;？，。；/0123456789]+") then return end
 
         -- 保存最近一次 commit 内容
         env.last_commit_text = commit_text
