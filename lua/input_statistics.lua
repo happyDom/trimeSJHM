@@ -271,11 +271,8 @@ local function init(env)
 		-- 如果输入是以 / 引导的，则不统计这个输入项
 		if ctx.input:find("^/") then return end
 
-		-- 排除统计候选上屏内容（例如 "※ 今天..." 或 "◉ 本年..."）
-		if commit_text:match("^[※◉]") then return end
-
 		-- 如果是标点符号，则不进行统计
-		if commit_text:match("[！!@#$％^&?,.;？，。；/0123456789]+") then return end
+		if commit_text:match("^[！!@#$％^&?,.;？，。；/0123456789]+$") then return end
 
 		-- 保存最近一次 commit 内容
 		env.last_commit_text = commit_text
