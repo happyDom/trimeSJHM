@@ -1,6 +1,9 @@
--- github.com/amzxyz
+-- base on github.com/amzxyz
+-- update by github.com/happyDom
 --[[
 首先，把本脚本放在你的方案下的lua文件夹内
+
+※：如果你第一次使用不早于 ₂₀₂₅1208・A 版本的本脚本，请把你原来lua文件夹下的 input_stats.lua删除
 
 其次，在你的方案补丁文件中，在translators节点加入 input_statistics 的引用，如下的第二项
   engine/translators/+:				#定制translator如下
@@ -29,15 +32,31 @@ local strTable = {}
 local software_name = rime_api.get_distribution_code_name()
 local software_version = rime_api.get_distribution_version()
 
+-- 一个数据结构体，用于处理平均速度统计临时数据
+avgSpdInfo = {logSts = 0,		-- 统计状态，0：未统计，1:正在统计，2:统计结束
+				startTime=0,	-- 如果正在记录，这里是开始的时间
+				commitTime=0,	-- 这是最近一次上屏的时间
+				gapThd=5,		-- 如果此次上屏距离前一次上屏时间大于此门限值，则重新开始计时
+				count=0			-- 记录期间，上屏的字数
+				}
+
 -- 初始化统计表（若未加载）
 input_stats = input_stats or {
-	daily = {count = 0, length = 0, fastest = 0, ts = 0, lengths = {}},
-	weekly = {count = 0, length = 0, fastest = 0, ts = 0, lengths = {}},
-	monthly = {count = 0, length = 0, fastest = 0, ts = 0, lengths = {}},
-	yearly = {count = 0, length = 0, fastest = 0, ts = 0, lengths = {}},
-	daily_max = 0,
-	recent = {}
+	daily = {count = 0, length = 0, fastest = 0, ts = 0, lengths = {}, avgGaps={}, avgCnts={}},
+	weekly = {count = 0, length = 0, fastest = 0, ts = 0, lengths = {}, avgGaps={}, avgCnts={}},
+	monthly = {count = 0, length = 0, fastest = 0, ts = 0, lengths = {}, avgGaps={}, avgCnts={}},
+	yearly = {count = 0, length = 0, fastest = 0, ts = 0, lengths = {}, avgGaps={}, avgCnts={}},
+	daily_max = 0
 }
+
+-- 定义一个求和函数，用于求取一个table内的数字的和
+local function tableSum(tb)
+	local sum = 0
+	for i=1, #tb do
+		sum = sum + tb[i]
+	end
+	return sum
+end
 
 -- 时间戳工具函数
 local function start_of_day(t)
@@ -65,18 +84,17 @@ local function update_stats(input_length)
 	local year_ts = start_of_year(now)
 
 	if input_stats.daily.ts ~= day_ts then
-		input_stats.daily = {count = 0, length = 0, fastest = 0, ts = day_ts, lengths = {}}
+		input_stats.daily = {count = 0, length = 0, fastest = 0, ts = day_ts, lengths = {}, avgGaps={}, avgCnts={}}
 		input_stats.daily_max = 0
-		input_stats.recent = {}
 	end
 	if input_stats.weekly.ts ~= week_ts then
-		input_stats.weekly = {count = 0, length = 0, fastest = 0, ts = week_ts, lengths = {}}
+		input_stats.weekly = {count = 0, length = 0, fastest = 0, ts = week_ts, lengths = {}, avgGaps={}, avgCnts={}}
 	end
 	if input_stats.monthly.ts ~= month_ts then
-		input_stats.monthly = {count = 0, length = 0, fastest = 0, ts = month_ts, lengths = {}}
+		input_stats.monthly = {count = 0, length = 0, fastest = 0, ts = month_ts, lengths = {}, avgGaps={}, avgCnts={}}
 	end
 	if input_stats.yearly.ts ~= year_ts then
-		input_stats.yearly = {count = 0, length = 0, fastest = 0, ts = year_ts, lengths = {}}
+		input_stats.yearly = {count = 0, length = 0, fastest = 0, ts = year_ts, lengths = {}, avgGaps={}, avgCnts={}}
 	end
 
 	-- 更新记录
@@ -98,24 +116,44 @@ local function update_stats(input_length)
 	input_stats.weekly.lengths[input_length] = (input_stats.weekly.lengths[input_length] or 0) + 1
 	input_stats.monthly.lengths[input_length] = (input_stats.monthly.lengths[input_length] or 0) + 1
 	input_stats.yearly.lengths[input_length] = (input_stats.yearly.lengths[input_length] or 0) + 1
+	
+	-- 更新平均分速统计数据
+	if 2 == avgSpdInfo.logSts then
+		local delt = avgSpdInfo.commitTime - avgSpdInfo.startTime
+		table.insert(input_stats.daily.avgGaps, delt)
+		table.insert(input_stats.weekly.avgGaps, delt)
+		table.insert(input_stats.monthly.avgGaps, delt)
+		table.insert(input_stats.yearly.avgGaps, delt)
+		table.insert(input_stats.daily.avgCnts, avgSpdInfo.count)
+		table.insert(input_stats.weekly.avgCnts, avgSpdInfo.count)
+		table.insert(input_stats.monthly.avgCnts, avgSpdInfo.count)
+		table.insert(input_stats.yearly.avgCnts, avgSpdInfo.count)
+		
+		avgSpdInfo.logSts = 0
+	end
 
-	-- 最近一分钟统计
-	local ts = os.time()
-	table.insert(input_stats.recent, {ts = ts, len = input_length})
-	local threshold = ts - 60
-	local total = 0
-	local new_recent = {}
-	for _, item in ipairs(input_stats.recent) do
-		if item.ts >= threshold then
-			total = total + item.len
-			table.insert(new_recent, item)
+	-- 查看最后10次提交，或者最后累计10s的提交数据，计算平均速度做为最大分速的参考
+	local latestGapsSum = 0
+	local latestCntsSum = 0
+	local latestSpd = 0
+	local len = #input_stats.daily.avgGaps
+	for i=0,9 do
+		if i < len then
+			latestGapsSum = latestGapsSum + input_stats.daily.avgGaps[len - i]
+			latestCntsSum = latestCntsSum + input_stats.daily.avgCnts[len - i]
+		end
+		if latestGapsSum >= 10 then
+			break
 		end
 	end
-	input_stats.recent = new_recent
-	if total > input_stats.daily.fastest then input_stats.daily.fastest = total end
-	if total > input_stats.weekly.fastest then input_stats.weekly.fastest = total end
-	if total > input_stats.monthly.fastest then input_stats.monthly.fastest = total end
-	if total > input_stats.yearly.fastest then input_stats.yearly.fastest = total end
+	if latestGapsSum > 1 then
+		latestSpd = latestCntsSum / latestGapsSum * 60
+	end
+	
+	if latestSpd > input_stats.daily.fastest then input_stats.daily.fastest = latestSpd end
+	if latestSpd > input_stats.weekly.fastest then input_stats.weekly.fastest = latestSpd end
+	if latestSpd > input_stats.monthly.fastest then input_stats.monthly.fastest = latestSpd end
+	if latestSpd > input_stats.yearly.fastest then input_stats.yearly.fastest = latestSpd end
 end
 
 -- 表序列化工具（请自行根据实际添加到环境中）
@@ -165,13 +203,20 @@ local function format_daily_summary()
 	local ratio2 = (val2 / total) * 100
 	local ratio3 = (val3 / total) * 100
 	
+	-- 计算平均分速
+	local avgV = tableSum(input_stats.daily.avgGaps)
+	if avgV > 1 then
+		avgV = tableSum(input_stats.daily.avgCnts) / avgV * 60
+	end
+	
 	strTable[1] = '※ 日统计：'
 	strTable[3] = string.format('上屏 %d 次',s.count)
 	strTable[4] = string.format('输入 %d 字',s.length)
-	strTable[5] = string.format('最大分速 %d 字',s.fastest)
-	strTable[7] = string.format('单字占比：%.0f％',ratio1)
-	strTable[8] = string.format('2字词占比：%.0f％',ratio2)
-	strTable[9] = string.format('>2字词占比：%.0f％',ratio3)
+	strTable[5] = string.format('最大分速 %.1f 字',s.fastest)
+	strTable[6] = string.format('平均分速 %.1f 字',avgV)
+	strTable[8] = string.format('单字占比：%.0f％',ratio1)
+	strTable[9] = string.format('2字词占比：%.0f％',ratio2)
+	strTable[10] = string.format('>2字词占比：%.0f％',ratio3)
 
 	return table.concat(strTable, '\n')
 end
@@ -195,13 +240,20 @@ local function format_weekly_summary()
 	local ratio2 = (val2 / total) * 100
 	local ratio3 = (val3 / total) * 100
 	
+	-- 计算平均分速
+	local avgV = tableSum(input_stats.weekly.avgGaps)
+	if avgV > 1 then
+		avgV = tableSum(input_stats.weekly.avgCnts) / avgV * 60
+	end
+	
 	strTable[1] = '※ 周统计：'
 	strTable[3] = string.format('上屏 %d 次',s.count)
 	strTable[4] = string.format('输入 %d 字',s.length)
-	strTable[5] = string.format('最大分速 %d 字',s.fastest)
-	strTable[7] = string.format('单字占比：%.0f％',ratio1)
-	strTable[8] = string.format('2字词占比：%.0f％',ratio2)
-	strTable[9] = string.format('>2字词占比：%.0f％',ratio3)
+	strTable[5] = string.format('最大分速 %.1f 字',s.fastest)
+	strTable[6] = string.format('平均分速 %.1f 字',avgV)
+	strTable[8] = string.format('单字占比：%.0f％',ratio1)
+	strTable[9] = string.format('2字词占比：%.0f％',ratio2)
+	strTable[10] = string.format('>2字词占比：%.0f％',ratio3)
 	return table.concat(strTable, '\n')
 end
 
@@ -224,13 +276,20 @@ local function format_monthly_summary()
 	local ratio2 = (val2 / total) * 100
 	local ratio3 = (val3 / total) * 100
 	
+	-- 计算平均分速
+	local avgV = tableSum(input_stats.monthly.avgGaps)
+	if avgV > 1 then
+		avgV = tableSum(input_stats.monthly.avgCnts) / avgV * 60
+	end
+	
 	strTable[1] = '※ 月统计：'
 	strTable[3] = string.format('上屏 %d 次',s.count)
 	strTable[4] = string.format('输入 %d 字',s.length)
-	strTable[5] = string.format('最大分速 %d 字',s.fastest)
-	strTable[7] = string.format('单字占比：%.0f％',ratio1)
-	strTable[8] = string.format('2字词占比：%.0f％',ratio2)
-	strTable[9] = string.format('>2字词占比：%.0f％',ratio3)
+	strTable[5] = string.format('最大分速 %.1f 字',s.fastest)
+	strTable[6] = string.format('平均分速 %.1f 字',avgV)
+	strTable[8] = string.format('单字占比：%.0f％',ratio1)
+	strTable[9] = string.format('2字词占比：%.0f％',ratio2)
+	strTable[10] = string.format('>2字词占比：%.0f％',ratio3)
 	return table.concat(strTable, '\n')
 end
 
@@ -253,13 +312,20 @@ local function format_yearly_summary()
 	local ratio2 = (val2 / total) * 100
 	local ratio3 = (val3 / total) * 100
 	
+	-- 计算平均分速
+	local avgV = tableSum(input_stats.yearly.avgGaps)
+	if avgV > 1 then
+		avgV = tableSum(input_stats.yearly.avgCnts) / avgV * 60
+	end
+	
 	strTable[1] = '※ 年统计：'
 	strTable[3] = string.format('上屏 %d 次',s.count)
 	strTable[4] = string.format('输入 %d 字',s.length)
-	strTable[5] = string.format('最大分速 %d 字',s.fastest)
-	strTable[7] = string.format('单字占比：%.0f％',ratio1)
-	strTable[8] = string.format('2字词占比：%.0f％',ratio2)
-	strTable[9] = string.format('>2字词占比：%.0f％',ratio3)
+	strTable[5] = string.format('最大分速 %.1f 字',s.fastest)
+	strTable[6] = string.format('平均分速 %.1f 字',avgV)
+	strTable[8] = string.format('单字占比：%.0f％',ratio1)
+	strTable[9] = string.format('2字词占比：%.0f％',ratio2)
+	strTable[10] = string.format('>2字词占比：%.0f％',ratio3)
 	return table.concat(strTable, '\n')
 end
 -- 转换器函数：处理命令 /rtj /ztj /ytj /ntj
@@ -276,12 +342,11 @@ local function translator(input, seg, env)
 		summary = format_yearly_summary()
 	elseif input == "/009" or input == "/qctj" then
 		input_stats = {
-			daily = {count = 0, length = 0, fastest = 0, ts = 0, lengths = {}},
-			weekly = {count = 0, length = 0, fastest = 0, ts = 0, lengths = {}},
-			monthly = {count = 0, length = 0, fastest = 0, ts = 0, lengths = {}},
-			yearly = {count = 0, length = 0, fastest = 0, ts = 0, lengths = {}},
-			daily_max = 0,
-			recent = {}
+			daily = {count = 0, length = 0, fastest = 0, ts = 0, lengths = {}, avgGaps={}, avgCnts={}},
+			weekly = {count = 0, length = 0, fastest = 0, ts = 0, lengths = {}, avgGaps={}, avgCnts={}},
+			monthly = {count = 0, length = 0, fastest = 0, ts = 0, lengths = {}, avgGaps={}, avgCnts={}},
+			yearly = {count = 0, length = 0, fastest = 0, ts = 0, lengths = {}, avgGaps={}, avgCnts={}},
+			daily_max = 0
 		}
 		save_stats()
 		summary = "※ 所有统计数据已清空。"
@@ -309,8 +374,7 @@ local function load_stats_from_lua_file()
 			weekly = {count = 0, length = 0, fastest = 0, ts = 0, lengths = {}},
 			monthly = {count = 0, length = 0, fastest = 0, ts = 0, lengths = {}},
 			yearly = {count = 0, length = 0, fastest = 0, ts = 0, lengths = {}},
-			daily_max = 0,
-			recent = {}
+			daily_max = 0
 		}
 	end
 end
@@ -323,12 +387,12 @@ local function init(env)
 	
 	-- 初始化统计字符串
 	strTable[2] = splitor
-	strTable[6] = splitor
-	strTable[10] = splitor
-	strTable[11] = '◉ 方案：'..schema_name
-	strTable[12] = '◉ 平台：'..software_name..' '..software_version
-	strTable[13] = splitor
-	strTable[14] = '脚本：₂₀₂₅1204・A'
+	strTable[7] = splitor
+	strTable[11] = splitor
+	strTable[12] = '◉ 方案：'..schema_name
+	strTable[13] = '◉ 平台：'..software_name..' '..software_version
+	strTable[14] = splitor
+	strTable[15] = '脚本：₂₀₂₅1207・B'
 
 	-- 注册提交通知回调
 	ctx.commit_notifier:connect(function()
@@ -343,14 +407,36 @@ local function init(env)
 
 		-- 如果是标点符号，则不进行统计
 		if commit_text:match("^[！!@#$％^&?,.;？，。；/0123456789]+$") then return end
-
-		-- 保存最近一次 commit 内容
-		env.last_commit_text = commit_text
-
-		-- 统计长度
+		
+		local timeNow = os.time()
 		local input_length = utf8.len(commit_text) or string.len(commit_text)
+		-- 统计平均分速
+		if 1 == avgSpdInfo.logSts then	-- 如果当前正在统计中
+			if timeNow - avgSpdInfo.commitTime > avgSpdInfo.gapThd then	-- 如果超时了
+				if avgSpdInfo.commitTime - avgSpdInfo.startTime >= 1 and avgSpdInfo.count > 0 then
+					avgSpdInfo.logSts = 2	-- 统计结束，后面会将统计结果记录起来
+				else
+					avgSpdInfo.logSts = 0	-- 统计恢复到初始状态
+				end
+			else
+				-- 更新上屏时间
+				avgSpdInfo.commitTime = timeNow
+				-- 记录输入字数
+				avgSpdInfo.count = avgSpdInfo.count + input_length
+			end
+		end
+		
+		-- 上屏统计
 		update_stats(input_length)
 		save_stats()
+		
+		-- 启动平均分速统计
+		if 0 == avgSpdInfo.logSts then	-- 如果当前没有进行统计，则此次上屏事件会触发统计启动
+			avgSpdInfo.logSts = 1
+			avgSpdInfo.startTime = timeNow
+			avgSpdInfo.commitTime = timeNow
+			avgSpdInfo.count = 0
+		end
 	end)
 end
 return { init = init, func = translator }
