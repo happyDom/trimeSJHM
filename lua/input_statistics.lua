@@ -447,7 +447,7 @@ local function init(env)
 	strTable[12] = '◉ 方案：'..schema_name
 	strTable[13] = '◉ 平台：'..software_name..' '..software_version
 	strTable[14] = splitor
-	strTable[15] = '脚本：₂₀₂₅1208・C'
+	strTable[15] = '脚本：₂₀₂₅1208・D'
 
 	-- 注册提交通知回调
 	ctx.commit_notifier:connect(function()
@@ -482,25 +482,16 @@ local function init(env)
 			end
 		end
 		
-		-- 如果卡壳了(但是间隔时间小于60s)，记录这个字/词
-		if delt > boggleThd_s and delt < 60 then
+		-- 如果卡壳了(但是间隔时间小于Xs)，记录这个字/词
+		if delt > boggleThd_s and delt < 10 then
 			if input_stats.newWords[commit_text] ~= nil then
 				table.insert(input_stats.newWords[commit_text], delt)
 			else
 				input_stats.newWords[commit_text] = {delt}
 			end
 		elseif delt < boggleThd_s then
-			-- 没有卡壳，但这是一个生字，则记录上屏时间，并尝试消除该记录
-			if input_stats.newWords[commit_text] ~= nil then
-				table.insert(input_stats.newWords[commit_text], 0)
-				local len = #input_stats.newWords[commit_text]
-				if len > 3 then
-					-- 如果该字/词最后三次的输入都没有超时，则消除该字/词的记录
-					if tableTailSum(input_stats.newWords[commit_text], 3) < 1 then
-						input_stats.newWords[commit_text] = nil
-					end
-				end
-			end
+			-- 没有卡壳，但这是一个生字，则消除该记录
+			input_stats.newWords[commit_text] = nil
 		end
 		
 		-- 上屏统计
