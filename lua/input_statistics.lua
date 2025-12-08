@@ -3,7 +3,9 @@
 --[[
 首先，把本脚本放在你的方案下的lua文件夹内
 
-※：如果你第一次使用不早于 ₂₀₂₅1208・A 版本的本脚本，请把你原来lua文件夹下的 input_stats.lua删除
+※：如果你的脚本名称为 input_statistics ₂₀₂₅1208・A.lua，你需要把文件名改为 input_statistics.lua后再用
+
+※：如果你第一次使用不早于 ₂₀₂₅1208・B 版本的本脚本，请把你原来lua文件夹下的 input_stats.lua删除
 
 其次，在你的方案补丁文件中，在translators节点加入 input_statistics 的引用，如下的第二项
   engine/translators/+:				#定制translator如下
@@ -19,11 +21,14 @@
 /02 /ztj	 查看周统计
 /03 /ytj	 查看月统计
 /04 /ntj	 查看年统计
+/05 /sz		 查看生字/词
 /009 /qctj	 清除统计数据
 ]]
 
 -- 输入方案名称
 local schema_name = "四角号码"
+-- 卡壳时间门限(单位：s)，当上屏的字/词距离前一次上屏时间大于该门限时，该字/词被记录为生字/词组数据
+local boggleThd_s = 3
 
 -- 分配一个变量，用于字符串拼接
 local strTable = {}
@@ -46,7 +51,8 @@ input_stats = input_stats or {
 	weekly = {count = 0, length = 0, fastest = 0, ts = 0, lengths = {}, avgGaps={}, avgCnts={}},
 	monthly = {count = 0, length = 0, fastest = 0, ts = 0, lengths = {}, avgGaps={}, avgCnts={}},
 	yearly = {count = 0, length = 0, fastest = 0, ts = 0, lengths = {}, avgGaps={}, avgCnts={}},
-	daily_max = 0
+	daily_max = 0,
+	newWords = {}
 }
 
 -- 定义一个求和函数，用于求取一个table内的数字的和
@@ -55,6 +61,21 @@ local function tableSum(tb)
 	for i=1, #tb do
 		sum = sum + tb[i]
 	end
+	return sum
+end
+
+-- 定义一个求和函数，用于求取一个table内尾部指定数量项的和
+local function tableTailSum(tb,n)
+	if type(tb) ~= "table" then return 0 end
+    local len = #tb
+	local n = tonumber(n) or 0  -- 非数字转 0
+	if n < 1 or len < 1 then return 0 end
+	
+	local sum = 0
+	local takeCount = math.min(n, len)
+	for i = 1, takeCount do
+        sum = sum + (tb[len - takeCount + i] or 0)
+    end
 	return sum
 end
 
@@ -132,21 +153,19 @@ local function update_stats(input_length)
 		avgSpdInfo.logSts = 0
 	end
 
-	-- 查看最后10次提交，或者最后累计10s的提交数据，计算平均速度做为最大分速的参考
+	-- 最后累计10s的提交数据，计算平均速度做为最大分速的参考
 	local latestGapsSum = 0
 	local latestCntsSum = 0
 	local latestSpd = 0
 	local len = #input_stats.daily.avgGaps
-	for i=0,9 do
-		if i < len then
-			latestGapsSum = latestGapsSum + input_stats.daily.avgGaps[len - i]
-			latestCntsSum = latestCntsSum + input_stats.daily.avgCnts[len - i]
-		end
-		if latestGapsSum >= 10 then
+	for i=0,len - 1 do
+		latestGapsSum = latestGapsSum + input_stats.daily.avgGaps[len - i]
+		latestCntsSum = latestCntsSum + input_stats.daily.avgCnts[len - i]
+		if latestGapsSum >= 10 then  -- 最后10s的平均速度做为瞬时速度
 			break
 		end
 	end
-	if latestGapsSum > 1 then
+	if latestGapsSum >= 10 then	-- 如果数据的时长小于10s，则不计算最大速度，避免瞬时偏差过大
 		latestSpd = latestCntsSum / latestGapsSum * 60
 	end
 	
@@ -328,6 +347,38 @@ local function format_yearly_summary()
 	strTable[10] = string.format('>2字词占比：%.0f％',ratio3)
 	return table.concat(strTable, '\n')
 end
+
+-- 显示记录的生字/词
+local function format_shengzi()
+	if input_stats.newWords == nil then
+		return string.format("※ 未发现生字/词记录。")
+	end
+	
+	local tmpTable = {}
+	local newWords = {}
+	local cnt = 0
+	local i = 1
+	tmpTable[1] = ""
+	for k, v in pairs(input_stats.newWords) do
+		i = i + 1
+		cnt = #v
+		tmpTable[i] = string.format("%s：%d次，ⱦ = %0.1fs", k, cnt, tableSum(v)/cnt)
+		table.insert(newWords, k)
+	end
+	tmpTable[1] = string.format("共有 %d 个生字/词：", i - 1)	-- 设置表头
+	
+	tmpTable[i + 1] = strTable[14]	-- 分隔线
+	tmpTable[i + 2] = table.concat(newWords, '，')
+	tmpTable[i + 3] = strTable[14]	-- 分隔线
+	tmpTable[i + 4] = strTable[15]	-- 版本信息
+	
+	if i < 2 then
+		return string.format("※ 未发现生字/词记录。")
+	else
+		return table.concat(tmpTable, '\n')
+	end
+end
+
 -- 转换器函数：处理命令 /rtj /ztj /ytj /ntj
 local function translator(input, seg, env)
 	if input:sub(1, 1) ~= "/" then return end
@@ -340,13 +391,16 @@ local function translator(input, seg, env)
 		summary = format_monthly_summary()
 	elseif input == "/04" or input == "/ntj" then
 		summary = format_yearly_summary()
+	elseif input == "/05" or input == "/sz" then
+		summary = format_shengzi()
 	elseif input == "/009" or input == "/qctj" then
 		input_stats = {
 			daily = {count = 0, length = 0, fastest = 0, ts = 0, lengths = {}, avgGaps={}, avgCnts={}},
 			weekly = {count = 0, length = 0, fastest = 0, ts = 0, lengths = {}, avgGaps={}, avgCnts={}},
 			monthly = {count = 0, length = 0, fastest = 0, ts = 0, lengths = {}, avgGaps={}, avgCnts={}},
 			yearly = {count = 0, length = 0, fastest = 0, ts = 0, lengths = {}, avgGaps={}, avgCnts={}},
-			daily_max = 0
+			daily_max = 0,
+			newWords = {}
 		}
 		save_stats()
 		summary = "※ 所有统计数据已清空。"
@@ -374,7 +428,8 @@ local function load_stats_from_lua_file()
 			weekly = {count = 0, length = 0, fastest = 0, ts = 0, lengths = {}},
 			monthly = {count = 0, length = 0, fastest = 0, ts = 0, lengths = {}},
 			yearly = {count = 0, length = 0, fastest = 0, ts = 0, lengths = {}},
-			daily_max = 0
+			daily_max = 0,
+			newWords = {}
 		}
 	end
 end
@@ -392,7 +447,7 @@ local function init(env)
 	strTable[12] = '◉ 方案：'..schema_name
 	strTable[13] = '◉ 平台：'..software_name..' '..software_version
 	strTable[14] = splitor
-	strTable[15] = '脚本：₂₀₂₅1207・B'
+	strTable[15] = '脚本：₂₀₂₅1208・C'
 
 	-- 注册提交通知回调
 	ctx.commit_notifier:connect(function()
@@ -410,9 +465,10 @@ local function init(env)
 		
 		local timeNow = os.time()
 		local input_length = utf8.len(commit_text) or string.len(commit_text)
+		local delt = timeNow - avgSpdInfo.commitTime
 		-- 统计平均分速
 		if 1 == avgSpdInfo.logSts then	-- 如果当前正在统计中
-			if timeNow - avgSpdInfo.commitTime > avgSpdInfo.gapThd then	-- 如果超时了
+			if delt > avgSpdInfo.gapThd then	-- 如果超时了
 				if avgSpdInfo.commitTime - avgSpdInfo.startTime >= 1 and avgSpdInfo.count > 0 then
 					avgSpdInfo.logSts = 2	-- 统计结束，后面会将统计结果记录起来
 				else
@@ -423,6 +479,27 @@ local function init(env)
 				avgSpdInfo.commitTime = timeNow
 				-- 记录输入字数
 				avgSpdInfo.count = avgSpdInfo.count + input_length
+			end
+		end
+		
+		-- 如果卡壳了(但是间隔时间小于60s)，记录这个字/词
+		if delt > boggleThd_s and delt < 60 then
+			if input_stats.newWords[commit_text] ~= nil then
+				table.insert(input_stats.newWords[commit_text], delt)
+			else
+				input_stats.newWords[commit_text] = {delt}
+			end
+		elseif delt < boggleThd_s then
+			-- 没有卡壳，但这是一个生字，则记录上屏时间，并尝试消除该记录
+			if input_stats.newWords[commit_text] ~= nil then
+				table.insert(input_stats.newWords[commit_text], 0)
+				local len = #input_stats.newWords[commit_text]
+				if len > 3 then
+					-- 如果该字/词最后三次的输入都没有超时，则消除该字/词的记录
+					if tableTailSum(input_stats.newWords[commit_text], 3) < 1 then
+						input_stats.newWords[commit_text] = nil
+					end
+				end
 			end
 		end
 		
