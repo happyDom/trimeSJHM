@@ -258,7 +258,7 @@ local function format_daily_summary()
 	local ratioSumOfFirstN = 0
 	for i = 1, 3 do
 		if i <= codeTypeCnt then
-			codeTableFirstN[i] = {codeLen = codeTable_sorted[i].clen, ratio = codeTable_sorted[i].count / totalCodeCnt}
+			codeTableFirstN[i] = {codeLen = codeTable_sorted[i].clen, ratio = codeTable_sorted[i].count / totalCodeCnt * 100}
 		else
 			codeTableFirstN[i] = {codeLen = 0, ratio=0}
 		end
@@ -346,7 +346,7 @@ local function format_weekly_summary()
 	local ratioSumOfFirstN = 0
 	for i = 1, 3 do
 		if i <= codeTypeCnt then
-			codeTableFirstN[i] = {codeLen = codeTable_sorted[i].clen, ratio = codeTable_sorted[i].count / totalCodeCnt}
+			codeTableFirstN[i] = {codeLen = codeTable_sorted[i].clen, ratio = codeTable_sorted[i].count / totalCodeCnt * 100}
 		else
 			codeTableFirstN[i] = {codeLen = 0, ratio=0}
 		end
@@ -433,7 +433,7 @@ local function format_monthly_summary()
 	local ratioSumOfFirstN = 0
 	for i = 1, 3 do
 		if i <= codeTypeCnt then
-			codeTableFirstN[i] = {codeLen = codeTable_sorted[i].clen, ratio = codeTable_sorted[i].count / totalCodeCnt}
+			codeTableFirstN[i] = {codeLen = codeTable_sorted[i].clen, ratio = codeTable_sorted[i].count / totalCodeCnt * 100}
 		else
 			codeTableFirstN[i] = {codeLen = 0, ratio=0}
 		end
@@ -520,7 +520,7 @@ local function format_yearly_summary()
 	local ratioSumOfFirstN = 0
 	for i = 1, 3 do
 		if i <= codeTypeCnt then
-			codeTableFirstN[i] = {codeLen = codeTable_sorted[i].clen, ratio = codeTable_sorted[i].count / totalCodeCnt}
+			codeTableFirstN[i] = {codeLen = codeTable_sorted[i].clen, ratio = codeTable_sorted[i].count / totalCodeCnt * 100}
 		else
 			codeTableFirstN[i] = {codeLen = 0, ratio=0}
 		end
@@ -713,7 +713,7 @@ local function init(env)
 	strTable[18] = '◉ 方案：'..schema_name
 	strTable[19] = '◉ 平台：'..software_name..' '..software_version
 	strTable[20] = splitor
-	strTable[21] = '脚本：₂₀₂₅1209・B'
+	strTable[21] = '脚本：₂₀₂₅1209・C'
 
 	-- 注册提交通知回调
 	ctx.commit_notifier:connect(function()
