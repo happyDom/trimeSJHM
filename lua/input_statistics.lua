@@ -289,22 +289,22 @@ local function format_daily_summary()
 	if codeTableFirstN[1].ratio > 0 then
 		strTable[13] = string.format('%s码占比：%.1f％', codeTableFirstN[1].codeLen, codeTableFirstN[1].ratio)
 	else
-		strTable[13] = '・'
+		strTable[13] = ''
 	end
 	if codeTableFirstN[2].ratio > 0 then
 		strTable[14] = string.format('%s码占比：%.1f％', codeTableFirstN[2].codeLen, codeTableFirstN[2].ratio)
 	else
-		strTable[14] = '・'
+		strTable[14] = ''
 	end
 	if codeTableFirstN[3].ratio > 0 then
 		strTable[15] = string.format('%s码占比：%.1f％', codeTableFirstN[3].codeLen, codeTableFirstN[3].ratio)
 	else
-		strTable[15] = '・'
+		strTable[15] = ''
 	end
 	if codeTableFirstN[4].ratio > 0 then
 		strTable[16] = string.format('其它占比：%.1f％', codeTableFirstN[4].ratio)
 	else
-		strTable[16] = '・'
+		strTable[16] = ''
 	end
 
 	return table.concat(strTable, '\n')
@@ -376,22 +376,22 @@ local function format_weekly_summary()
 	if codeTableFirstN[1].ratio > 0 then
 		strTable[13] = string.format('%s码占比：%.1f％', codeTableFirstN[1].codeLen, codeTableFirstN[1].ratio)
 	else
-		strTable[13] = '・'
+		strTable[13] = ''
 	end
 	if codeTableFirstN[2].ratio > 0 then
 		strTable[14] = string.format('%s码占比：%.1f％', codeTableFirstN[2].codeLen, codeTableFirstN[2].ratio)
 	else
-		strTable[14] = '・'
+		strTable[14] = ''
 	end
 	if codeTableFirstN[3].ratio > 0 then
 		strTable[15] = string.format('%s码占比：%.1f％', codeTableFirstN[3].codeLen, codeTableFirstN[3].ratio)
 	else
-		strTable[15] = '・'
+		strTable[15] = ''
 	end
 	if codeTableFirstN[4].ratio > 0 then
 		strTable[16] = string.format('其它占比：%.1f％', codeTableFirstN[4].ratio)
 	else
-		strTable[16] = '・'
+		strTable[16] = ''
 	end
 	
 	return table.concat(strTable, '\n')
@@ -463,22 +463,22 @@ local function format_monthly_summary()
 	if codeTableFirstN[1].ratio > 0 then
 		strTable[13] = string.format('%s码占比：%.1f％', codeTableFirstN[1].codeLen, codeTableFirstN[1].ratio)
 	else
-		strTable[13] = '・'
+		strTable[13] = ''
 	end
 	if codeTableFirstN[2].ratio > 0 then
 		strTable[14] = string.format('%s码占比：%.1f％', codeTableFirstN[2].codeLen, codeTableFirstN[2].ratio)
 	else
-		strTable[14] = '・'
+		strTable[14] = ''
 	end
 	if codeTableFirstN[3].ratio > 0 then
 		strTable[15] = string.format('%s码占比：%.1f％', codeTableFirstN[3].codeLen, codeTableFirstN[3].ratio)
 	else
-		strTable[15] = '・'
+		strTable[15] = ''
 	end
 	if codeTableFirstN[4].ratio > 0 then
 		strTable[16] = string.format('其它占比：%.1f％', codeTableFirstN[4].ratio)
 	else
-		strTable[16] = '・'
+		strTable[16] = ''
 	end
 	
 	return table.concat(strTable, '\n')
@@ -550,22 +550,22 @@ local function format_yearly_summary()
 	if codeTableFirstN[1].ratio > 0 then
 		strTable[13] = string.format('%s码占比：%.1f％', codeTableFirstN[1].codeLen, codeTableFirstN[1].ratio)
 	else
-		strTable[13] = '・'
+		strTable[13] = ''
 	end
 	if codeTableFirstN[2].ratio > 0 then
 		strTable[14] = string.format('%s码占比：%.1f％', codeTableFirstN[2].codeLen, codeTableFirstN[2].ratio)
 	else
-		strTable[14] = '・'
+		strTable[14] = ''
 	end
 	if codeTableFirstN[3].ratio > 0 then
 		strTable[15] = string.format('%s码占比：%.1f％', codeTableFirstN[3].codeLen, codeTableFirstN[3].ratio)
 	else
-		strTable[15] = '・'
+		strTable[15] = ''
 	end
 	if codeTableFirstN[4].ratio > 0 then
 		strTable[16] = string.format('其它占比：%.1f％', codeTableFirstN[4].ratio)
 	else
-		strTable[16] = '・'
+		strTable[16] = ''
 	end
 	
 	return table.concat(strTable, '\n')
@@ -715,7 +715,7 @@ local function init(env)
 	strTable[18] = '◉ 方案：'..schema_name
 	strTable[19] = '◉ 平台：'..software_name..' '..software_version
 	strTable[20] = splitor
-	strTable[21] = '脚本：₂₀₂₅1209・D'
+	strTable[21] = '脚本：₂₀₂₅1209・E'
 
 	-- 注册提交通知回调
 	ctx.commit_notifier:connect(function()
