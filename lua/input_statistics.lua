@@ -266,7 +266,7 @@ local function format_daily_summary()
 		end
 		ratioSumOfFirstN = ratioSumOfFirstN + codeTableFirstN[i].ratio
 	end
-	codeTableFirstN[4] = {codeLen = 0, ratio = 1 - ratioSumOfFirstN}
+	codeTableFirstN[4] = {codeLen = 0, ratio = 100 - ratioSumOfFirstN}
 	-- 计算平均码长
 	local avgCodeLen = totalCodeLen / total
 	
@@ -354,7 +354,7 @@ local function format_weekly_summary()
 		end
 		ratioSumOfFirstN = ratioSumOfFirstN + codeTableFirstN[i].ratio
 	end
-	codeTableFirstN[4] = {codeLen = 0, ratio = 1 - ratioSumOfFirstN}
+	codeTableFirstN[4] = {codeLen = 0, ratio = 100 - ratioSumOfFirstN}
 	-- 计算平均码长
 	local avgCodeLen = totalCodeLen / total
 	
@@ -441,7 +441,7 @@ local function format_monthly_summary()
 		end
 		ratioSumOfFirstN = ratioSumOfFirstN + codeTableFirstN[i].ratio
 	end
-	codeTableFirstN[4] = {codeLen = 0, ratio = 1 - ratioSumOfFirstN}
+	codeTableFirstN[4] = {codeLen = 0, ratio = 100 - ratioSumOfFirstN}
 	-- 计算平均码长
 	local avgCodeLen = totalCodeLen / total
 	
@@ -528,7 +528,7 @@ local function format_yearly_summary()
 		end
 		ratioSumOfFirstN = ratioSumOfFirstN + codeTableFirstN[i].ratio
 	end
-	codeTableFirstN[4] = {codeLen = 0, ratio = 1 - ratioSumOfFirstN}
+	codeTableFirstN[4] = {codeLen = 0, ratio = 100 - ratioSumOfFirstN}
 	-- 计算平均码长
 	local avgCodeLen = totalCodeLen / total
 	
@@ -715,7 +715,7 @@ local function init(env)
 	strTable[18] = '◉ 方案：'..schema_name
 	strTable[19] = '◉ 平台：'..software_name..' '..software_version
 	strTable[20] = splitor
-	strTable[21] = '脚本：₂₀₂₅1209・E'
+	strTable[21] = '脚本：₂₀₂₅1209・F'
 
 	-- 注册提交通知回调
 	ctx.commit_notifier:connect(function()
