@@ -35,6 +35,8 @@
 local schema_name = "四角号码"
 -- 卡壳时间门限(单位：s)，当上屏的字/词距离前一次上屏时间大于该门限时，该字/词被记录为生字/词组数据
 local boggleThd_s = 3
+-- 在提交修改时，记录的码长做 + codeLenOffset 处理
+local codeLenOffset = 1
 
 -- 分配一个变量，用于字符串拼接
 local strTable = {}
@@ -713,7 +715,7 @@ local function init(env)
 	strTable[18] = '◉ 方案：'..schema_name
 	strTable[19] = '◉ 平台：'..software_name..' '..software_version
 	strTable[20] = splitor
-	strTable[21] = '脚本：₂₀₂₅1209・C'
+	strTable[21] = '脚本：₂₀₂₅1209・D'
 
 	-- 注册提交通知回调
 	ctx.commit_notifier:connect(function()
@@ -754,7 +756,7 @@ local function init(env)
 		end
 		
 		-- 上屏统计
-		update_stats(input_length, string.len(ctx.input), 0)
+		update_stats(input_length, string.len(ctx.input) + codeLenOffset, 0)
 		save_stats()
 	end)
 end
