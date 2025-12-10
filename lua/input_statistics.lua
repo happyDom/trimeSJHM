@@ -28,7 +28,8 @@
 /03 /ytj	 查看月统计
 /04 /ntj	 查看年统计
 /05 /sztj		 查看生字/词
-/009 /qctj	 清除统计数据
+/008 /qcsz	清除生字/词
+/009 /qctj	 清除所有统计数据
 ]]
 
 -- 输入方案名称
@@ -586,7 +587,7 @@ local function format_shengzi()
 	for k, v in pairs(input_stats.newWords) do
 		i = i + 1
 		cnt = #v
-		tmpTable[i] = string.format("%s：%d次，ⱦ = %0.1fs", k, cnt, tableSum(v)/cnt)
+		tmpTable[i] = string.format("%s：%d次，t\204\133 = %0.1fs", k, cnt, tableSum(v)/cnt)
 		table.insert(newWords, k)
 	end
 	tmpTable[1] = string.format("共有 %d 个生字/词：", i - 1)	-- 设置表头
@@ -671,6 +672,9 @@ local function translator(input, seg, env)
 	elseif input == "/05" or input == "/sztj" then
 		if avgAvailable == 1 then update_stats(0, 0, 1) end
 		summary = format_shengzi()
+	elseif input == "/008" or input == "/qcsz" then
+		input_stats.newWords = {}
+		summary = "※ 生字词已清空。"
 	elseif input == "/009" or input == "/qctj" then
 		input_stats = {
 			daily = {count = 0, length = 0, fastest = 0, ts = 0, lengths = {}, codeLengths = {}, avgGaps = {}, avgCnts = {}},
@@ -715,7 +719,7 @@ local function init(env)
 	strTable[18] = '◉ 方案：'..schema_name
 	strTable[19] = '◉ 平台：'..software_name..' '..software_version
 	strTable[20] = splitor
-	strTable[21] = '脚本：₂₀₂₅1209・F'
+	strTable[21] = '脚本：₂₀₂₅1210・A'
 
 	-- 注册提交通知回调
 	ctx.commit_notifier:connect(function()
