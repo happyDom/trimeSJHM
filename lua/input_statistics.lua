@@ -38,6 +38,8 @@ local schema_name = "四角号码"
 local boggleThd_s = 3
 -- 在提交修改时，记录的码长做 + codeLenOffset 处理
 local codeLenOffset = 1
+-- 如果你想在平均码长后加以说明，请在这里自定义你的说明内容
+local codeLenDesc = '(码长+1)'
 
 -- 分配一个变量，用于字符串拼接
 local strTable = {}
@@ -283,7 +285,7 @@ local function format_daily_summary()
 	strTable[4] = string.format('输入 %d 字',s.length)
 	strTable[5] = string.format('最大分速 %.1f 字',s.fastest)
 	strTable[6] = string.format('平均分速 %.1f 字',avgV)
-	strTable[7] = string.format('平均码长 %.1f',avgCodeLen)
+	strTable[7] = string.format('平均码长 %.1f%s',avgCodeLen, codeLenDesc)
 	strTable[9] = string.format('单字占比：%.1f％',ratio1)
 	strTable[10] = string.format('2字词占比：%.1f％',ratio2)
 	strTable[11] = string.format('>2字词占比：%.1f％',ratio3)
@@ -370,7 +372,7 @@ local function format_weekly_summary()
 	strTable[4] = string.format('输入 %d 字',s.length)
 	strTable[5] = string.format('最大分速 %.1f 字',s.fastest)
 	strTable[6] = string.format('平均分速 %.1f 字',avgV)
-	strTable[7] = string.format('平均码长 %.1f',avgCodeLen)
+	strTable[7] = string.format('平均码长 %.1f%s',avgCodeLen, codeLenDesc)
 	strTable[9] = string.format('单字占比：%.0f％',ratio1)
 	strTable[10] = string.format('2字词占比：%.0f％',ratio2)
 	strTable[11] = string.format('>2字词占比：%.0f％',ratio3)
@@ -457,7 +459,7 @@ local function format_monthly_summary()
 	strTable[4] = string.format('输入 %d 字',s.length)
 	strTable[5] = string.format('最大分速 %.1f 字',s.fastest)
 	strTable[6] = string.format('平均分速 %.1f 字',avgV)
-	strTable[7] = string.format('平均码长 %.1f',avgCodeLen)
+	strTable[7] = string.format('平均码长 %.1f%s',avgCodeLen, codeLenDesc)
 	strTable[9] = string.format('单字占比：%.0f％',ratio1)
 	strTable[10] = string.format('2字词占比：%.0f％',ratio2)
 	strTable[11] = string.format('>2字词占比：%.0f％',ratio3)
@@ -544,7 +546,7 @@ local function format_yearly_summary()
 	strTable[4] = string.format('输入 %d 字',s.length)
 	strTable[5] = string.format('最大分速 %.1f 字',s.fastest)
 	strTable[6] = string.format('平均分速 %.1f 字',avgV)
-	strTable[7] = string.format('平均码长 %.1f',avgCodeLen)
+	strTable[7] = string.format('平均码长 %.1f%s',avgCodeLen, codeLenDesc)
 	strTable[9] = string.format('单字占比：%.0f％',ratio1)
 	strTable[10] = string.format('2字词占比：%.0f％',ratio2)
 	strTable[11] = string.format('>2字词占比：%.0f％',ratio3)
@@ -719,7 +721,7 @@ local function init(env)
 	strTable[18] = '◉ 方案：'..schema_name
 	strTable[19] = '◉ 平台：'..software_name..' '..software_version
 	strTable[20] = splitor
-	strTable[21] = '脚本：₂₀₂₅1210・A'
+	strTable[21] = '脚本：₂₀₂₅1210・B'
 
 	-- 注册提交通知回调
 	ctx.commit_notifier:connect(function()
