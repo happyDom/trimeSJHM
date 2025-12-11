@@ -726,7 +726,7 @@ local function init(env)
 	strTable[18] = '◉ 方案：'..schema_name
 	strTable[19] = '◉ 平台：'..software_name..' '..software_version
 	strTable[20] = splitor
-	strTable[21] = '脚本：₂₀₂₅1211・B'
+	strTable[21] = '脚本：₂₀₂₅1211・C'
 	
 	-- 注册提交通知回调
 	env.notifier = env.engine.context.commit_notifier:connect(function(ctx)
@@ -772,9 +772,9 @@ local function init(env)
 	end)
 end
 function finit(env)
-	if env.stat_notifier then
+	if env.notifier then
 		env.notifier:disconnect()
-		env.stat_notifier = nil
+		env.notifier = nil
 	end
 end
 return { init = init, fini = finit, func = translator }
