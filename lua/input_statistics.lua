@@ -278,6 +278,7 @@ local function format_daily_summary()
 	local avgV = tableSum(input_stats.daily.avgGaps)
 	if avgV > 1 then
 		avgV = tableSum(input_stats.daily.avgCnts) / avgV * 60
+		if avgV > s.fastest then s.fastest = avgV end
 	end
 	
 	strTable[1] = '※ 日统计：'
@@ -365,6 +366,7 @@ local function format_weekly_summary()
 	local avgV = tableSum(input_stats.weekly.avgGaps)
 	if avgV > 1 then
 		avgV = tableSum(input_stats.weekly.avgCnts) / avgV * 60
+		if avgV > s.fastest then s.fastest = avgV end
 	end
 	
 	strTable[1] = '※ 周统计：'
@@ -452,6 +454,7 @@ local function format_monthly_summary()
 	local avgV = tableSum(input_stats.monthly.avgGaps)
 	if avgV > 1 then
 		avgV = tableSum(input_stats.monthly.avgCnts) / avgV * 60
+		if avgV > s.fastest then s.fastest = avgV end
 	end
 	
 	strTable[1] = '※ 月统计：'
@@ -539,6 +542,7 @@ local function format_yearly_summary()
 	local avgV = tableSum(input_stats.yearly.avgGaps)
 	if avgV > 1 then
 		avgV = tableSum(input_stats.yearly.avgCnts) / avgV * 60
+		if avgV > s.fastest then s.fastest = avgV end
 	end
 	
 	strTable[1] = '※ 年统计：'
@@ -722,10 +726,10 @@ local function init(env)
 	strTable[18] = '◉ 方案：'..schema_name
 	strTable[19] = '◉ 平台：'..software_name..' '..software_version
 	strTable[20] = splitor
-	strTable[21] = '脚本：₂₀₂₅1211・A'
+	strTable[21] = '脚本：₂₀₂₅1211・B'
 	
 	-- 注册提交通知回调
-	ctx.commit_notifier:connect(function()
+	env.notifier = env.engine.context.commit_notifier:connect(function(ctx)
 		local commit_text = ctx:get_commit_text()
 		if not commit_text or commit_text == "" then return end
 		
@@ -767,4 +771,10 @@ local function init(env)
 		save_stats(env.engine.schema.schema_id)
 	end)
 end
-return { init = init, func = translator }
+function finit(env)
+	if env.stat_notifier then
+		env.notifier:disconnect()
+		env.stat_notifier = nil
+	end
+end
+return { init = init, fini = finit, func = translator }
