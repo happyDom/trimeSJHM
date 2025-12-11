@@ -32,14 +32,14 @@
 /009 /qctj	 清除所有统计数据
 ]]
 
--- 输入方案名称
-local schema_name = "四角号码"
 -- 卡壳时间门限(单位：s)，当上屏的字/词距离前一次上屏时间大于该门限时，该字/词被记录为生字/词组数据
 local boggleThd_s = 3
--- 在提交修改时，记录的码长做 + codeLenOffset 处理
+-- 在提交修改时，记录的码长做 + codeLenOffset 处理；如果你每个字需要选字或者空格上屏，则此处的1即表示一个空格的码长
 local codeLenOffset = 1
--- 如果你想在平均码长后加以说明，请在这里自定义你的说明内容
-local codeLenDesc = '(码长+1)'
+-- 如果你想在最大分速后加以说明，请在这里自定义你的说明内容，可以使用 \n 换行
+local maxSpdDesc = ''
+-- 如果你想在平均码长后加以说明，请在这里自定义你的说明内容，可以使用 \n 换行
+local avgCodeLenDesc = '〔含空格〕'
 
 -- 分配一个变量，用于字符串拼接
 local strTable = {}
@@ -217,8 +217,8 @@ table.serialize = function(tbl)
 end
 
 -- 保存至文件
-local function save_stats()
-	local path = rime_api.get_user_data_dir() .. "/lua/input_stats.lua"
+local function save_stats(schema_id)
+	local path = rime_api.get_user_data_dir() .. "/lua/input_stats_"..schema_id..".lua"
 	local file = io.open(path, "w")
 	if not file then return end
 	file:write("input_stats = " .. table.serialize(input_stats) .. "\n")
@@ -283,9 +283,9 @@ local function format_daily_summary()
 	strTable[1] = '※ 日统计：'
 	strTable[3] = string.format('上屏 %d 次',s.count)
 	strTable[4] = string.format('输入 %d 字',s.length)
-	strTable[5] = string.format('最大分速 %.1f 字',s.fastest)
+	strTable[5] = string.format('最大分速 %.1f 字%s',s.fastest, maxSpdDesc)
 	strTable[6] = string.format('平均分速 %.1f 字',avgV)
-	strTable[7] = string.format('平均码长 %.1f%s',avgCodeLen, codeLenDesc)
+	strTable[7] = string.format('平均码长 %.1f%s',avgCodeLen, avgCodeLenDesc)
 	strTable[9] = string.format('单字占比：%.1f％',ratio1)
 	strTable[10] = string.format('2字词占比：%.1f％',ratio2)
 	strTable[11] = string.format('>2字词占比：%.1f％',ratio3)
@@ -370,9 +370,9 @@ local function format_weekly_summary()
 	strTable[1] = '※ 周统计：'
 	strTable[3] = string.format('上屏 %d 次',s.count)
 	strTable[4] = string.format('输入 %d 字',s.length)
-	strTable[5] = string.format('最大分速 %.1f 字',s.fastest)
+	strTable[5] = string.format('最大分速 %.1f 字%s',s.fastest, maxSpdDesc)
 	strTable[6] = string.format('平均分速 %.1f 字',avgV)
-	strTable[7] = string.format('平均码长 %.1f%s',avgCodeLen, codeLenDesc)
+	strTable[7] = string.format('平均码长 %.1f%s',avgCodeLen, avgCodeLenDesc)
 	strTable[9] = string.format('单字占比：%.0f％',ratio1)
 	strTable[10] = string.format('2字词占比：%.0f％',ratio2)
 	strTable[11] = string.format('>2字词占比：%.0f％',ratio3)
@@ -457,9 +457,9 @@ local function format_monthly_summary()
 	strTable[1] = '※ 月统计：'
 	strTable[3] = string.format('上屏 %d 次',s.count)
 	strTable[4] = string.format('输入 %d 字',s.length)
-	strTable[5] = string.format('最大分速 %.1f 字',s.fastest)
+	strTable[5] = string.format('最大分速 %.1f 字%s',s.fastest, maxSpdDesc)
 	strTable[6] = string.format('平均分速 %.1f 字',avgV)
-	strTable[7] = string.format('平均码长 %.1f%s',avgCodeLen, codeLenDesc)
+	strTable[7] = string.format('平均码长 %.1f%s',avgCodeLen, avgCodeLenDesc)
 	strTable[9] = string.format('单字占比：%.0f％',ratio1)
 	strTable[10] = string.format('2字词占比：%.0f％',ratio2)
 	strTable[11] = string.format('>2字词占比：%.0f％',ratio3)
@@ -544,9 +544,9 @@ local function format_yearly_summary()
 	strTable[1] = '※ 年统计：'
 	strTable[3] = string.format('上屏 %d 次',s.count)
 	strTable[4] = string.format('输入 %d 字',s.length)
-	strTable[5] = string.format('最大分速 %.1f 字',s.fastest)
+	strTable[5] = string.format('最大分速 %.1f 字%s',s.fastest, maxSpdDesc)
 	strTable[6] = string.format('平均分速 %.1f 字',avgV)
-	strTable[7] = string.format('平均码长 %.1f%s',avgCodeLen, codeLenDesc)
+	strTable[7] = string.format('平均码长 %.1f%s',avgCodeLen, avgCodeLenDesc)
 	strTable[9] = string.format('单字占比：%.0f％',ratio1)
 	strTable[10] = string.format('2字词占比：%.0f％',ratio2)
 	strTable[11] = string.format('>2字词占比：%.0f％',ratio3)
@@ -607,8 +607,8 @@ local function format_shengzi()
 end
 
 -- 加载保存的统计数据（input_stats.lua）
-local function load_stats_from_lua_file()
-	local path = rime_api.get_user_data_dir() .. "/lua/input_stats.lua"
+local function load_stats_from_lua_file(schema_id)
+	local path = rime_api.get_user_data_dir() .. "/lua/input_stats_"..schema_id..".lua"
 	local ok, result = pcall(function()
 		local env = {}
 		local f = loadfile(path, "t", env)
@@ -686,7 +686,7 @@ local function translator(input, seg, env)
 			daily_max = 0,
 			newWords = {}
 		}
-		save_stats()
+		save_stats(env.engine.schema.schema_id)
 		summary = "※ 所有统计数据已清空。"
 	end
 
@@ -696,9 +696,10 @@ local function translator(input, seg, env)
 end
 
 local function init(env)
+	local schema_name = env.engine.schema.schema_name or '未知'
 	local ctx = env.engine.context
-	-- 加载历史统计数据
-	load_stats_from_lua_file()
+	-- 加载指定输入方案的历史统计数据
+	load_stats_from_lua_file(env.engine.schema.schema_id)
 	
 	-- 初始化统计字符串
 	strTable[1] = ''
@@ -721,8 +722,8 @@ local function init(env)
 	strTable[18] = '◉ 方案：'..schema_name
 	strTable[19] = '◉ 平台：'..software_name..' '..software_version
 	strTable[20] = splitor
-	strTable[21] = '脚本：₂₀₂₅1210・B'
-
+	strTable[21] = '脚本：₂₀₂₅1211・A'
+	
 	-- 注册提交通知回调
 	ctx.commit_notifier:connect(function()
 		local commit_text = ctx:get_commit_text()
@@ -763,7 +764,7 @@ local function init(env)
 		
 		-- 上屏统计
 		update_stats(input_length, string.len(ctx.input) + codeLenOffset, 0)
-		save_stats()
+		save_stats(env.engine.schema.schema_id)
 	end)
 end
 return { init = init, func = translator }
