@@ -36,14 +36,12 @@
 local boggleThd_s = 3
 -- 在提交修改时，记录的码长做 + codeLenOffset 处理；如果你每个字需要选字或者空格上屏，则此处的1即表示一个空格的码长
 local codeLenOffset = 1
--- 如果你想在最大分速后加以说明，请在这里自定义你的说明内容，可以使用 \n 换行
-local maxSpdDesc = ''
 -- 如果你想在平均码长后加以说明，请在这里自定义你的说明内容，可以使用 \n 换行
 local avgCodeLenDesc = '〔含空格〕'
 -- 定义字词分布进度条填充字符，例如你可以使用 ▉/━/● 来表示
 local progressBarField_word = '▉'
 -- 定义字词分布进度条空白字符，例如你可以使用 ▁/┄/▓ 来表示
-local progressBarEmpty_word = '▓'
+local progressBarEmpty_word = '▁'
 -- 定义码长分布进度条填充字符，例如你可以使用 ▉/━/● 来表示
 local progressBarField_code = '▉'
 -- 定义码长分布进度条空白字符，例如你可以使用 ▁/┄/▓ 来表示
@@ -320,34 +318,32 @@ local function format_daily_summary()
 		if avgV > fastest then fastest = avgV end
 	end
 	
-	strTable[1] = string.format('※ 日统计@%s', os.date("%Y%m%d %H:%M:%S", tBase))
-	strTable[3] = string.format('上屏 %d 次', s.count)
-	strTable[4] = string.format('输入 %d 字', s.length)
-	strTable[5] = string.format('最大分速 %.1f 字%s', fastest, maxSpdDesc)
-	strTable[6] = string.format('平均分速 %.1f 字', avgV)
-	strTable[7] = string.format('平均码长 %.1f%s', avgCodeLen, avgCodeLenDesc)
-	strTable[9] = string.format('%s〔单字〕%.0f％', progressBar_word(ratio1), ratio1)
-	strTable[10] = string.format('%s〔2字〕%.0f％', progressBar_word(ratio2), ratio2)
-	strTable[11] = string.format('%s〔>2字〕%.0f％', progressBar_word(ratio3), ratio3)
+	strTable[1] = string.format('※ 日统计@%s', os.date("%Y/%m/%d %H:%M:%S", tBase))
+	strTable[3] = string.format('上屏 %d 次，输入 %d 字', s.count, s.length)
+	strTable[4] = string.format('极速 %.1f，均速 %.1f', fastest, avgV)
+	strTable[5] = string.format('平均码长 %.1f%s', avgCodeLen, avgCodeLenDesc)
+	strTable[7] = string.format('%s单字%.0f％', progressBar_word(ratio1), ratio1)
+	strTable[8] = string.format('%s2字%.0f％', progressBar_word(ratio2), ratio2)
+	strTable[9] = string.format('%s>2字%.0f％', progressBar_word(ratio3), ratio3)
 	if codeTableFirstN[1].ratio > 0 then
-		strTable[13] = string.format('%s〔%s码〕%.0f％', progressBar_code(codeTableFirstN[1].ratio), codeTableFirstN[1].codeLen, codeTableFirstN[1].ratio)
+		strTable[11] = string.format('%s%s码%.0f％', progressBar_code(codeTableFirstN[1].ratio), codeTableFirstN[1].codeLen, codeTableFirstN[1].ratio)
+	else
+		strTable[11] = ''
+	end
+	if codeTableFirstN[2].ratio > 0 then
+		strTable[12] = string.format('%s%s码%.0f％', progressBar_code(codeTableFirstN[2].ratio), codeTableFirstN[2].codeLen, codeTableFirstN[2].ratio)
+	else
+		strTable[12] = ''
+	end
+	if codeTableFirstN[3].ratio > 0 then
+		strTable[13] = string.format('%s%s码%.0f％', progressBar_code(codeTableFirstN[3].ratio), codeTableFirstN[3].codeLen, codeTableFirstN[3].ratio)
 	else
 		strTable[13] = ''
 	end
-	if codeTableFirstN[2].ratio > 0 then
-		strTable[14] = string.format('%s〔%s码〕%.0f％', progressBar_code(codeTableFirstN[2].ratio), codeTableFirstN[2].codeLen, codeTableFirstN[2].ratio)
+	if codeTableFirstN[4].ratio > 0 then
+		strTable[14] = string.format('%s其它%.0f％', progressBar_code(codeTableFirstN[4].ratio), codeTableFirstN[4].ratio)
 	else
 		strTable[14] = ''
-	end
-	if codeTableFirstN[3].ratio > 0 then
-		strTable[15] = string.format('%s〔%s码〕%.0f％', progressBar_code(codeTableFirstN[3].ratio), codeTableFirstN[3].codeLen, codeTableFirstN[3].ratio)
-	else
-		strTable[15] = ''
-	end
-	if codeTableFirstN[4].ratio > 0 then
-		strTable[16] = string.format('%s〔其它〕%.0f％', progressBar_code(codeTableFirstN[4].ratio), codeTableFirstN[4].ratio)
-	else
-		strTable[16] = ''
 	end
 
 	return table.concat(strTable, '\n')
@@ -411,34 +407,32 @@ local function format_weekly_summary()
 		if avgV > fastest then fastest = avgV end
 	end
 	
-	string.format('※ 周统计@%s', os.date("%Y%m%d %H:%M:%S", tBase))
-	strTable[3] = string.format('上屏 %d 次', s.count)
-	strTable[4] = string.format('输入 %d 字', s.length)
-	strTable[5] = string.format('最大分速 %.1f 字%s', fastest, maxSpdDesc)
-	strTable[6] = string.format('平均分速 %.1f 字', avgV)
-	strTable[7] = string.format('平均码长 %.1f%s', avgCodeLen, avgCodeLenDesc)
-	strTable[9] = string.format('%s〔单字〕%.0f％', progressBar_word(ratio1), ratio1)
-	strTable[10] = string.format('%s〔2字〕%.0f％', progressBar_word(ratio2), ratio2)
-	strTable[11] = string.format('%s〔>2字〕%.0f％', progressBar_word(ratio3), ratio3)
+	strTable[1] = string.format('※ 周统计@%s', os.date("%Y/%m/%d %H:%M:%S", tBase))
+	strTable[3] = string.format('上屏 %d 次，输入 %d 字', s.count, s.length)
+	strTable[4] = string.format('极速 %.1f，均速 %.1f', fastest, avgV)
+	strTable[5] = string.format('平均码长 %.1f%s', avgCodeLen, avgCodeLenDesc)
+	strTable[7] = string.format('%s单字%.0f％', progressBar_word(ratio1), ratio1)
+	strTable[8] = string.format('%s2字%.0f％', progressBar_word(ratio2), ratio2)
+	strTable[9] = string.format('%s>2字%.0f％', progressBar_word(ratio3), ratio3)
 	if codeTableFirstN[1].ratio > 0 then
-		strTable[13] = string.format('%s〔%s码〕%.0f％', progressBar_code(codeTableFirstN[1].ratio), codeTableFirstN[1].codeLen, codeTableFirstN[1].ratio)
+		strTable[11] = string.format('%s%s码%.0f％', progressBar_code(codeTableFirstN[1].ratio), codeTableFirstN[1].codeLen, codeTableFirstN[1].ratio)
+	else
+		strTable[11] = ''
+	end
+	if codeTableFirstN[2].ratio > 0 then
+		strTable[12] = string.format('%s%s码%.0f％', progressBar_code(codeTableFirstN[2].ratio), codeTableFirstN[2].codeLen, codeTableFirstN[2].ratio)
+	else
+		strTable[12] = ''
+	end
+	if codeTableFirstN[3].ratio > 0 then
+		strTable[13] = string.format('%s%s码%.0f％', progressBar_code(codeTableFirstN[3].ratio), codeTableFirstN[3].codeLen, codeTableFirstN[3].ratio)
 	else
 		strTable[13] = ''
 	end
-	if codeTableFirstN[2].ratio > 0 then
-		strTable[14] = string.format('%s〔%s码〕%.0f％', progressBar_code(codeTableFirstN[2].ratio), codeTableFirstN[2].codeLen, codeTableFirstN[2].ratio)
+	if codeTableFirstN[4].ratio > 0 then
+		strTable[14] = string.format('%s其它%.0f％', progressBar_code(codeTableFirstN[4].ratio), codeTableFirstN[4].ratio)
 	else
 		strTable[14] = ''
-	end
-	if codeTableFirstN[3].ratio > 0 then
-		strTable[15] = string.format('%s〔%s码〕%.0f％', progressBar_code(codeTableFirstN[3].ratio), codeTableFirstN[3].codeLen, codeTableFirstN[3].ratio)
-	else
-		strTable[15] = ''
-	end
-	if codeTableFirstN[4].ratio > 0 then
-		strTable[16] = string.format('%s〔其它〕%.0f％', progressBar_code(codeTableFirstN[4].ratio), codeTableFirstN[4].ratio)
-	else
-		strTable[16] = ''
 	end
 	
 	return table.concat(strTable, '\n')
@@ -502,34 +496,32 @@ local function format_monthly_summary()
 		if avgV > fastest then fastest = avgV end
 	end
 	
-	string.format('※ 月统计@%s', os.date("%Y%m%d %H:%M:%S", tBase))
-	strTable[3] = string.format('上屏 %d 次', s.count)
-	strTable[4] = string.format('输入 %d 字', s.length)
-	strTable[5] = string.format('最大分速 %.1f 字%s', fastest, maxSpdDesc)
-	strTable[6] = string.format('平均分速 %.1f 字', avgV)
-	strTable[7] = string.format('平均码长 %.1f%s', avgCodeLen, avgCodeLenDesc)
-	strTable[9] = string.format('%s〔单字〕%.0f％', progressBar_word(ratio1), ratio1)
-	strTable[10] = string.format('%s〔2字〕%.0f％', progressBar_word(ratio2), ratio2)
-	strTable[11] = string.format('%s〔>2字〕%.0f％', progressBar_word(ratio3), ratio3)
+	strTable[1] = string.format('※ 月统计@%s', os.date("%Y/%m/%d %H:%M:%S", tBase))
+	strTable[3] = string.format('上屏 %d 次，输入 %d 字', s.count, s.length)
+	strTable[4] = string.format('极速 %.1f，均速 %.1f', fastest, avgV)
+	strTable[5] = string.format('平均码长 %.1f%s', avgCodeLen, avgCodeLenDesc)
+	strTable[7] = string.format('%s单字%.0f％', progressBar_word(ratio1), ratio1)
+	strTable[8] = string.format('%s2字%.0f％', progressBar_word(ratio2), ratio2)
+	strTable[9] = string.format('%s>2字%.0f％', progressBar_word(ratio3), ratio3)
 	if codeTableFirstN[1].ratio > 0 then
-		strTable[13] = string.format('%s〔%s码〕%.0f％', progressBar_code(codeTableFirstN[1].ratio), codeTableFirstN[1].codeLen, codeTableFirstN[1].ratio)
+		strTable[11] = string.format('%s%s码%.0f％', progressBar_code(codeTableFirstN[1].ratio), codeTableFirstN[1].codeLen, codeTableFirstN[1].ratio)
+	else
+		strTable[11] = ''
+	end
+	if codeTableFirstN[2].ratio > 0 then
+		strTable[12] = string.format('%s%s码%.0f％', progressBar_code(codeTableFirstN[2].ratio), codeTableFirstN[2].codeLen, codeTableFirstN[2].ratio)
+	else
+		strTable[12] = ''
+	end
+	if codeTableFirstN[3].ratio > 0 then
+		strTable[13] = string.format('%s%s码%.0f％', progressBar_code(codeTableFirstN[3].ratio), codeTableFirstN[3].codeLen, codeTableFirstN[3].ratio)
 	else
 		strTable[13] = ''
 	end
-	if codeTableFirstN[2].ratio > 0 then
-		strTable[14] = string.format('%s〔%s码〕%.0f％', progressBar_code(codeTableFirstN[2].ratio), codeTableFirstN[2].codeLen, codeTableFirstN[2].ratio)
+	if codeTableFirstN[4].ratio > 0 then
+		strTable[14] = string.format('%s其它%.0f％', progressBar_code(codeTableFirstN[4].ratio), codeTableFirstN[4].ratio)
 	else
 		strTable[14] = ''
-	end
-	if codeTableFirstN[3].ratio > 0 then
-		strTable[15] = string.format('%s〔%s码〕%.0f％', progressBar_code(codeTableFirstN[3].ratio), codeTableFirstN[3].codeLen, codeTableFirstN[3].ratio)
-	else
-		strTable[15] = ''
-	end
-	if codeTableFirstN[4].ratio > 0 then
-		strTable[16] = string.format('%s〔其它〕%.0f％', progressBar_code(codeTableFirstN[4].ratio), codeTableFirstN[4].ratio)
-	else
-		strTable[16] = ''
 	end
 	
 	return table.concat(strTable, '\n')
@@ -593,34 +585,32 @@ local function format_yearly_summary()
 		if avgV > fastest then fastest = avgV end
 	end
 	
-	string.format('※ 年统计@%s', os.date("%Y%m%d %H:%M:%S", tBase))
-	strTable[3] = string.format('上屏 %d 次', s.count)
-	strTable[4] = string.format('输入 %d 字', s.length)
-	strTable[5] = string.format('最大分速 %.1f 字%s', fastest, maxSpdDesc)
-	strTable[6] = string.format('平均分速 %.1f 字', avgV)
-	strTable[7] = string.format('平均码长 %.1f%s', avgCodeLen, avgCodeLenDesc)
-	strTable[9] = string.format('%s〔单字〕%.0f％', progressBar_word(ratio1), ratio1)
-	strTable[10] = string.format('%s〔2字〕%.0f％', progressBar_word(ratio2), ratio2)
-	strTable[11] = string.format('%s〔>2字〕%.0f％', progressBar_word(ratio3), ratio3)
+	strTable[1] = string.format('※ 年统计@%s', os.date("%Y/%m/%d %H:%M:%S", tBase))
+	strTable[3] = string.format('上屏 %d 次，输入 %d 字', s.count, s.length)
+	strTable[4] = string.format('极速 %.1f，均速 %.1f', fastest, avgV)
+	strTable[5] = string.format('平均码长 %.1f%s', avgCodeLen, avgCodeLenDesc)
+	strTable[7] = string.format('%s单字%.0f％', progressBar_word(ratio1), ratio1)
+	strTable[8] = string.format('%s2字%.0f％', progressBar_word(ratio2), ratio2)
+	strTable[9] = string.format('%s>2字%.0f％', progressBar_word(ratio3), ratio3)
 	if codeTableFirstN[1].ratio > 0 then
-		strTable[13] = string.format('%s〔%s码〕%.0f％', progressBar_code(codeTableFirstN[1].ratio), codeTableFirstN[1].codeLen, codeTableFirstN[1].ratio)
+		strTable[11] = string.format('%s%s码%.0f％', progressBar_code(codeTableFirstN[1].ratio), codeTableFirstN[1].codeLen, codeTableFirstN[1].ratio)
+	else
+		strTable[11] = ''
+	end
+	if codeTableFirstN[2].ratio > 0 then
+		strTable[12] = string.format('%s%s码%.0f％', progressBar_code(codeTableFirstN[2].ratio), codeTableFirstN[2].codeLen, codeTableFirstN[2].ratio)
+	else
+		strTable[12] = ''
+	end
+	if codeTableFirstN[3].ratio > 0 then
+		strTable[13] = string.format('%s%s码%.0f％', progressBar_code(codeTableFirstN[3].ratio), codeTableFirstN[3].codeLen, codeTableFirstN[3].ratio)
 	else
 		strTable[13] = ''
 	end
-	if codeTableFirstN[2].ratio > 0 then
-		strTable[14] = string.format('%s〔%s码〕%.0f％', progressBar_code(codeTableFirstN[2].ratio), codeTableFirstN[2].codeLen, codeTableFirstN[2].ratio)
+	if codeTableFirstN[4].ratio > 0 then
+		strTable[14] = string.format('%s其它%.0f％', progressBar_code(codeTableFirstN[4].ratio), codeTableFirstN[4].ratio)
 	else
 		strTable[14] = ''
-	end
-	if codeTableFirstN[3].ratio > 0 then
-		strTable[15] = string.format('%s〔%s码〕%.0f％', progressBar_code(codeTableFirstN[3].ratio), codeTableFirstN[3].codeLen, codeTableFirstN[3].ratio)
-	else
-		strTable[15] = ''
-	end
-	if codeTableFirstN[4].ratio > 0 then
-		strTable[16] = string.format('%s〔其它〕%.0f％', progressBar_code(codeTableFirstN[4].ratio), codeTableFirstN[4].ratio)
-	else
-		strTable[16] = ''
 	end
 	
 	return table.concat(strTable, '\n')
@@ -759,22 +749,20 @@ local function init(env)
 	strTable[3] = ''
 	strTable[4] = ''
 	strTable[5] = ''
-	strTable[6] = ''
+	strTable[6] = '📊'..string.rep("─", 13)
 	strTable[7] = ''
-	strTable[8] = '📊'..string.rep("─", 13)
+	strTable[8] = ''
 	strTable[9] = ''
-	strTable[10] = ''
+	strTable[10] = '📊'..string.rep("─", 13)
 	strTable[11] = ''
-	strTable[12] = '📊'..string.rep("─", 13)
+	strTable[12] = ''
 	strTable[13] = ''
 	strTable[14] = ''
-	strTable[15] = ''
-	strTable[16] = ''
-	strTable[17] = splitor
-	strTable[18] = '◉ 方案：'..schema_name
-	strTable[19] = '◉ 平台：'..software_name..' '..software_version
-	strTable[20] = splitor
-	strTable[21] = '脚本：₂₀₂₅1212・C'
+	strTable[15] = splitor
+	strTable[16] = '◉ 方案：'..schema_name
+	strTable[17] = '◉ 平台：'..software_name..' '..software_version
+	strTable[18] = splitor
+	strTable[19] = '脚本：₂₀₂₅1212・D'
 	
 	-- 注册提交通知回调
 	env.notifier = env.engine.context.commit_notifier:connect(function(ctx)
