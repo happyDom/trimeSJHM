@@ -40,6 +40,14 @@ local codeLenOffset = 1
 local maxSpdDesc = ''
 -- 如果你想在平均码长后加以说明，请在这里自定义你的说明内容，可以使用 \n 换行
 local avgCodeLenDesc = '〔含空格〕'
+-- 定义字词分布进度条填充字符，例如你可以使用 ▉/━/● 来表示
+local progressBarField_word = '▉'
+-- 定义字词分布进度条空白字符，例如你可以使用 ▁/┄/▓ 来表示
+local progressBarEmpty_word = '▓'
+-- 定义码长分布进度条填充字符，例如你可以使用 ▉/━/● 来表示
+local progressBarField_code = '▉'
+-- 定义码长分布进度条空白字符，例如你可以使用 ▁/┄/▓ 来表示
+local progressBarEmpty_code = '▁'
 
 -- 分配一个变量，用于字符串拼接
 local strTable = {}
@@ -91,6 +99,35 @@ local function tableTailSum(tb,n)
         sum = sum + (tb[len - takeCount + i] or 0)
     end
 	return sum
+end
+
+-- 根据传入的百分比，生成一个进度条
+local function progressBar_code(p)
+	if p >= 95.0 then return string.rep(progressBarField_code, 10) end
+	if p >= 85.0 then return string.rep(progressBarField_code, 9)..string.rep(progressBarEmpty_code, 1) end
+	if p >= 75.0 then return string.rep(progressBarField_code, 8)..string.rep(progressBarEmpty_code, 2) end
+	if p >= 65.0 then return string.rep(progressBarField_code, 7)..string.rep(progressBarEmpty_code, 3) end
+	if p >= 55.0 then return string.rep(progressBarField_code, 6)..string.rep(progressBarEmpty_code, 4) end
+	if p >= 45.0 then return string.rep(progressBarField_code, 5)..string.rep(progressBarEmpty_code, 5) end
+	if p >= 35.0 then return string.rep(progressBarField_code, 4)..string.rep(progressBarEmpty_code, 6) end
+	if p >= 25.0 then return string.rep(progressBarField_code, 3)..string.rep(progressBarEmpty_code, 7) end
+	if p >= 15.0 then return string.rep(progressBarField_code, 2)..string.rep(progressBarEmpty_code, 8) end
+	if p >= 5.0 then return string.rep(progressBarField_code, 1)..string.rep(progressBarEmpty_code, 9) end
+	return string.rep(progressBarEmpty_code, 10)
+end
+
+local function progressBar_word(p)
+	if p >= 95.0 then return string.rep(progressBarField_word, 10) end
+	if p >= 85.0 then return string.rep(progressBarField_word, 9)..string.rep(progressBarEmpty_word, 1) end
+	if p >= 75.0 then return string.rep(progressBarField_word, 8)..string.rep(progressBarEmpty_word, 2) end
+	if p >= 65.0 then return string.rep(progressBarField_word, 7)..string.rep(progressBarEmpty_word, 3) end
+	if p >= 55.0 then return string.rep(progressBarField_word, 6)..string.rep(progressBarEmpty_word, 4) end
+	if p >= 45.0 then return string.rep(progressBarField_word, 5)..string.rep(progressBarEmpty_word, 5) end
+	if p >= 35.0 then return string.rep(progressBarField_word, 4)..string.rep(progressBarEmpty_word, 6) end
+	if p >= 25.0 then return string.rep(progressBarField_word, 3)..string.rep(progressBarEmpty_word, 7) end
+	if p >= 15.0 then return string.rep(progressBarField_word, 2)..string.rep(progressBarEmpty_word, 8) end
+	if p >= 5.0 then return string.rep(progressBarField_word, 1)..string.rep(progressBarEmpty_word, 9) end
+	return string.rep(progressBarEmpty_word, 10)
 end
 
 -- 时间戳工具函数
@@ -230,6 +267,9 @@ local function format_daily_summary()
 	local s = input_stats.daily
 	if s.count == 0 then return "※ 今天没有任何记录。" end
 	
+	-- 记录最大值
+	local fastest = s.fastest
+	
 	-- 统计各类输入组合的占比
 	local val1 = s.lengths[1] or 0  -- 防止索引不存在时报错，默认0
 	local val2 = (s.lengths[2] or 0) * 2
@@ -273,40 +313,39 @@ local function format_daily_summary()
 	-- 计算平均码长
 	local avgCodeLen = totalCodeLen / total
 	
-	
 	-- 计算平均分速
 	local avgV = tableSum(input_stats.daily.avgGaps)
 	if avgV > 1 then
 		avgV = tableSum(input_stats.daily.avgCnts) / avgV * 60
-		if avgV > s.fastest then s.fastest = avgV end
+		if avgV > fastest then fastest = avgV end
 	end
 	
-	strTable[1] = '※ 日统计：'
-	strTable[3] = string.format('上屏 %d 次',s.count)
-	strTable[4] = string.format('输入 %d 字',s.length)
-	strTable[5] = string.format('最大分速 %.1f 字%s',s.fastest, maxSpdDesc)
-	strTable[6] = string.format('平均分速 %.1f 字',avgV)
-	strTable[7] = string.format('平均码长 %.1f%s',avgCodeLen, avgCodeLenDesc)
-	strTable[9] = string.format('单字占比：%.1f％',ratio1)
-	strTable[10] = string.format('2字词占比：%.1f％',ratio2)
-	strTable[11] = string.format('>2字词占比：%.1f％',ratio3)
+	strTable[1] = string.format('※ 日统计@%s', os.date("%Y%m%d %H:%M:%S", tBase))
+	strTable[3] = string.format('上屏 %d 次', s.count)
+	strTable[4] = string.format('输入 %d 字', s.length)
+	strTable[5] = string.format('最大分速 %.1f 字%s', fastest, maxSpdDesc)
+	strTable[6] = string.format('平均分速 %.1f 字', avgV)
+	strTable[7] = string.format('平均码长 %.1f%s', avgCodeLen, avgCodeLenDesc)
+	strTable[9] = string.format('%s〔单字〕%.0f％', progressBar_word(ratio1), ratio1)
+	strTable[10] = string.format('%s〔2字〕%.0f％', progressBar_word(ratio2), ratio2)
+	strTable[11] = string.format('%s〔>2字〕%.0f％', progressBar_word(ratio3), ratio3)
 	if codeTableFirstN[1].ratio > 0 then
-		strTable[13] = string.format('%s码占比：%.1f％', codeTableFirstN[1].codeLen, codeTableFirstN[1].ratio)
+		strTable[13] = string.format('%s〔%s码〕%.0f％', progressBar_code(codeTableFirstN[1].ratio), codeTableFirstN[1].codeLen, codeTableFirstN[1].ratio)
 	else
 		strTable[13] = ''
 	end
 	if codeTableFirstN[2].ratio > 0 then
-		strTable[14] = string.format('%s码占比：%.1f％', codeTableFirstN[2].codeLen, codeTableFirstN[2].ratio)
+		strTable[14] = string.format('%s〔%s码〕%.0f％', progressBar_code(codeTableFirstN[2].ratio), codeTableFirstN[2].codeLen, codeTableFirstN[2].ratio)
 	else
 		strTable[14] = ''
 	end
 	if codeTableFirstN[3].ratio > 0 then
-		strTable[15] = string.format('%s码占比：%.1f％', codeTableFirstN[3].codeLen, codeTableFirstN[3].ratio)
+		strTable[15] = string.format('%s〔%s码〕%.0f％', progressBar_code(codeTableFirstN[3].ratio), codeTableFirstN[3].codeLen, codeTableFirstN[3].ratio)
 	else
 		strTable[15] = ''
 	end
 	if codeTableFirstN[4].ratio > 0 then
-		strTable[16] = string.format('其它占比：%.1f％', codeTableFirstN[4].ratio)
+		strTable[16] = string.format('%s〔其它〕%.0f％', progressBar_code(codeTableFirstN[4].ratio), codeTableFirstN[4].ratio)
 	else
 		strTable[16] = ''
 	end
@@ -318,6 +357,9 @@ end
 local function format_weekly_summary()
 	local s = input_stats.weekly
 	if s.count == 0 then return "※ 本周没有任何记录。" end
+	
+	-- 记录最大值
+	local fastest = s.fastest
 	
 	-- 统计各类输入组合的占比
 	local val1 = s.lengths[1] or 0  -- 防止索引不存在时报错，默认0
@@ -366,35 +408,35 @@ local function format_weekly_summary()
 	local avgV = tableSum(input_stats.weekly.avgGaps)
 	if avgV > 1 then
 		avgV = tableSum(input_stats.weekly.avgCnts) / avgV * 60
-		if avgV > s.fastest then s.fastest = avgV end
+		if avgV > fastest then fastest = avgV end
 	end
 	
-	strTable[1] = '※ 周统计：'
-	strTable[3] = string.format('上屏 %d 次',s.count)
-	strTable[4] = string.format('输入 %d 字',s.length)
-	strTable[5] = string.format('最大分速 %.1f 字%s',s.fastest, maxSpdDesc)
-	strTable[6] = string.format('平均分速 %.1f 字',avgV)
-	strTable[7] = string.format('平均码长 %.1f%s',avgCodeLen, avgCodeLenDesc)
-	strTable[9] = string.format('单字占比：%.0f％',ratio1)
-	strTable[10] = string.format('2字词占比：%.0f％',ratio2)
-	strTable[11] = string.format('>2字词占比：%.0f％',ratio3)
+	string.format('※ 周统计@%s', os.date("%Y%m%d %H:%M:%S", tBase))
+	strTable[3] = string.format('上屏 %d 次', s.count)
+	strTable[4] = string.format('输入 %d 字', s.length)
+	strTable[5] = string.format('最大分速 %.1f 字%s', fastest, maxSpdDesc)
+	strTable[6] = string.format('平均分速 %.1f 字', avgV)
+	strTable[7] = string.format('平均码长 %.1f%s', avgCodeLen, avgCodeLenDesc)
+	strTable[9] = string.format('%s〔单字〕%.0f％', progressBar_word(ratio1), ratio1)
+	strTable[10] = string.format('%s〔2字〕%.0f％', progressBar_word(ratio2), ratio2)
+	strTable[11] = string.format('%s〔>2字〕%.0f％', progressBar_word(ratio3), ratio3)
 	if codeTableFirstN[1].ratio > 0 then
-		strTable[13] = string.format('%s码占比：%.1f％', codeTableFirstN[1].codeLen, codeTableFirstN[1].ratio)
+		strTable[13] = string.format('%s〔%s码〕%.0f％', progressBar_code(codeTableFirstN[1].ratio), codeTableFirstN[1].codeLen, codeTableFirstN[1].ratio)
 	else
 		strTable[13] = ''
 	end
 	if codeTableFirstN[2].ratio > 0 then
-		strTable[14] = string.format('%s码占比：%.1f％', codeTableFirstN[2].codeLen, codeTableFirstN[2].ratio)
+		strTable[14] = string.format('%s〔%s码〕%.0f％', progressBar_code(codeTableFirstN[2].ratio), codeTableFirstN[2].codeLen, codeTableFirstN[2].ratio)
 	else
 		strTable[14] = ''
 	end
 	if codeTableFirstN[3].ratio > 0 then
-		strTable[15] = string.format('%s码占比：%.1f％', codeTableFirstN[3].codeLen, codeTableFirstN[3].ratio)
+		strTable[15] = string.format('%s〔%s码〕%.0f％', progressBar_code(codeTableFirstN[3].ratio), codeTableFirstN[3].codeLen, codeTableFirstN[3].ratio)
 	else
 		strTable[15] = ''
 	end
 	if codeTableFirstN[4].ratio > 0 then
-		strTable[16] = string.format('其它占比：%.1f％', codeTableFirstN[4].ratio)
+		strTable[16] = string.format('%s〔其它〕%.0f％', progressBar_code(codeTableFirstN[4].ratio), codeTableFirstN[4].ratio)
 	else
 		strTable[16] = ''
 	end
@@ -406,6 +448,9 @@ end
 local function format_monthly_summary()
 	local s = input_stats.monthly
 	if s.count == 0 then return "※ 本月没有任何记录。" end
+	
+	-- 记录最大值
+	local fastest = s.fastest
 	
 	-- 统计各类输入组合的占比
 	local val1 = s.lengths[1] or 0  -- 防止索引不存在时报错，默认0
@@ -454,35 +499,35 @@ local function format_monthly_summary()
 	local avgV = tableSum(input_stats.monthly.avgGaps)
 	if avgV > 1 then
 		avgV = tableSum(input_stats.monthly.avgCnts) / avgV * 60
-		if avgV > s.fastest then s.fastest = avgV end
+		if avgV > fastest then fastest = avgV end
 	end
 	
-	strTable[1] = '※ 月统计：'
-	strTable[3] = string.format('上屏 %d 次',s.count)
-	strTable[4] = string.format('输入 %d 字',s.length)
-	strTable[5] = string.format('最大分速 %.1f 字%s',s.fastest, maxSpdDesc)
-	strTable[6] = string.format('平均分速 %.1f 字',avgV)
-	strTable[7] = string.format('平均码长 %.1f%s',avgCodeLen, avgCodeLenDesc)
-	strTable[9] = string.format('单字占比：%.0f％',ratio1)
-	strTable[10] = string.format('2字词占比：%.0f％',ratio2)
-	strTable[11] = string.format('>2字词占比：%.0f％',ratio3)
+	string.format('※ 月统计@%s', os.date("%Y%m%d %H:%M:%S", tBase))
+	strTable[3] = string.format('上屏 %d 次', s.count)
+	strTable[4] = string.format('输入 %d 字', s.length)
+	strTable[5] = string.format('最大分速 %.1f 字%s', fastest, maxSpdDesc)
+	strTable[6] = string.format('平均分速 %.1f 字', avgV)
+	strTable[7] = string.format('平均码长 %.1f%s', avgCodeLen, avgCodeLenDesc)
+	strTable[9] = string.format('%s〔单字〕%.0f％', progressBar_word(ratio1), ratio1)
+	strTable[10] = string.format('%s〔2字〕%.0f％', progressBar_word(ratio2), ratio2)
+	strTable[11] = string.format('%s〔>2字〕%.0f％', progressBar_word(ratio3), ratio3)
 	if codeTableFirstN[1].ratio > 0 then
-		strTable[13] = string.format('%s码占比：%.1f％', codeTableFirstN[1].codeLen, codeTableFirstN[1].ratio)
+		strTable[13] = string.format('%s〔%s码〕%.0f％', progressBar_code(codeTableFirstN[1].ratio), codeTableFirstN[1].codeLen, codeTableFirstN[1].ratio)
 	else
 		strTable[13] = ''
 	end
 	if codeTableFirstN[2].ratio > 0 then
-		strTable[14] = string.format('%s码占比：%.1f％', codeTableFirstN[2].codeLen, codeTableFirstN[2].ratio)
+		strTable[14] = string.format('%s〔%s码〕%.0f％', progressBar_code(codeTableFirstN[2].ratio), codeTableFirstN[2].codeLen, codeTableFirstN[2].ratio)
 	else
 		strTable[14] = ''
 	end
 	if codeTableFirstN[3].ratio > 0 then
-		strTable[15] = string.format('%s码占比：%.1f％', codeTableFirstN[3].codeLen, codeTableFirstN[3].ratio)
+		strTable[15] = string.format('%s〔%s码〕%.0f％', progressBar_code(codeTableFirstN[3].ratio), codeTableFirstN[3].codeLen, codeTableFirstN[3].ratio)
 	else
 		strTable[15] = ''
 	end
 	if codeTableFirstN[4].ratio > 0 then
-		strTable[16] = string.format('其它占比：%.1f％', codeTableFirstN[4].ratio)
+		strTable[16] = string.format('%s〔其它〕%.0f％', progressBar_code(codeTableFirstN[4].ratio), codeTableFirstN[4].ratio)
 	else
 		strTable[16] = ''
 	end
@@ -494,6 +539,9 @@ end
 local function format_yearly_summary()
 	local s = input_stats.yearly
 	if s.count == 0 then return "※ 本年没有任何记录。" end
+	
+	-- 记录最大值
+	local fastest = s.fastest
 	
 	-- 统计各类输入组合的占比
 	local val1 = s.lengths[1] or 0  -- 防止索引不存在时报错，默认0
@@ -542,35 +590,35 @@ local function format_yearly_summary()
 	local avgV = tableSum(input_stats.yearly.avgGaps)
 	if avgV > 1 then
 		avgV = tableSum(input_stats.yearly.avgCnts) / avgV * 60
-		if avgV > s.fastest then s.fastest = avgV end
+		if avgV > fastest then fastest = avgV end
 	end
 	
-	strTable[1] = '※ 年统计：'
-	strTable[3] = string.format('上屏 %d 次',s.count)
-	strTable[4] = string.format('输入 %d 字',s.length)
-	strTable[5] = string.format('最大分速 %.1f 字%s',s.fastest, maxSpdDesc)
-	strTable[6] = string.format('平均分速 %.1f 字',avgV)
-	strTable[7] = string.format('平均码长 %.1f%s',avgCodeLen, avgCodeLenDesc)
-	strTable[9] = string.format('单字占比：%.0f％',ratio1)
-	strTable[10] = string.format('2字词占比：%.0f％',ratio2)
-	strTable[11] = string.format('>2字词占比：%.0f％',ratio3)
+	string.format('※ 年统计@%s', os.date("%Y%m%d %H:%M:%S", tBase))
+	strTable[3] = string.format('上屏 %d 次', s.count)
+	strTable[4] = string.format('输入 %d 字', s.length)
+	strTable[5] = string.format('最大分速 %.1f 字%s', fastest, maxSpdDesc)
+	strTable[6] = string.format('平均分速 %.1f 字', avgV)
+	strTable[7] = string.format('平均码长 %.1f%s', avgCodeLen, avgCodeLenDesc)
+	strTable[9] = string.format('%s〔单字〕%.0f％', progressBar_word(ratio1), ratio1)
+	strTable[10] = string.format('%s〔2字〕%.0f％', progressBar_word(ratio2), ratio2)
+	strTable[11] = string.format('%s〔>2字〕%.0f％', progressBar_word(ratio3), ratio3)
 	if codeTableFirstN[1].ratio > 0 then
-		strTable[13] = string.format('%s码占比：%.1f％', codeTableFirstN[1].codeLen, codeTableFirstN[1].ratio)
+		strTable[13] = string.format('%s〔%s码〕%.0f％', progressBar_code(codeTableFirstN[1].ratio), codeTableFirstN[1].codeLen, codeTableFirstN[1].ratio)
 	else
 		strTable[13] = ''
 	end
 	if codeTableFirstN[2].ratio > 0 then
-		strTable[14] = string.format('%s码占比：%.1f％', codeTableFirstN[2].codeLen, codeTableFirstN[2].ratio)
+		strTable[14] = string.format('%s〔%s码〕%.0f％', progressBar_code(codeTableFirstN[2].ratio), codeTableFirstN[2].codeLen, codeTableFirstN[2].ratio)
 	else
 		strTable[14] = ''
 	end
 	if codeTableFirstN[3].ratio > 0 then
-		strTable[15] = string.format('%s码占比：%.1f％', codeTableFirstN[3].codeLen, codeTableFirstN[3].ratio)
+		strTable[15] = string.format('%s〔%s码〕%.0f％', progressBar_code(codeTableFirstN[3].ratio), codeTableFirstN[3].codeLen, codeTableFirstN[3].ratio)
 	else
 		strTable[15] = ''
 	end
 	if codeTableFirstN[4].ratio > 0 then
-		strTable[16] = string.format('其它占比：%.1f％', codeTableFirstN[4].ratio)
+		strTable[16] = string.format('%s〔其它〕%.0f％', progressBar_code(codeTableFirstN[4].ratio), codeTableFirstN[4].ratio)
 	else
 		strTable[16] = ''
 	end
@@ -707,17 +755,17 @@ local function init(env)
 	
 	-- 初始化统计字符串
 	strTable[1] = ''
-	strTable[2] = splitor
+	strTable[2] = '📈'..string.rep("─", 13)
 	strTable[3] = ''
 	strTable[4] = ''
 	strTable[5] = ''
 	strTable[6] = ''
 	strTable[7] = ''
-	strTable[8] = splitor
+	strTable[8] = '📊'..string.rep("─", 13)
 	strTable[9] = ''
 	strTable[10] = ''
 	strTable[11] = ''
-	strTable[12] = splitor
+	strTable[12] = '📊'..string.rep("─", 13)
 	strTable[13] = ''
 	strTable[14] = ''
 	strTable[15] = ''
@@ -726,7 +774,7 @@ local function init(env)
 	strTable[18] = '◉ 方案：'..schema_name
 	strTable[19] = '◉ 平台：'..software_name..' '..software_version
 	strTable[20] = splitor
-	strTable[21] = '脚本：₂₀₂₅1211・C'
+	strTable[21] = '脚本：₂₀₂₅1212・C'
 	
 	-- 注册提交通知回调
 	env.notifier = env.engine.context.commit_notifier:connect(function(ctx)
