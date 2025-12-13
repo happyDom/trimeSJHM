@@ -34,10 +34,10 @@
 
 -- 卡壳时间门限(单位：s)，当上屏的字/词距离前一次上屏时间大于该门限时，该字/词被记录为生字/词组数据
 local boggleThd_s = 3
--- 在提交修改时，记录的码长做 + codeLenOffset 处理；如果你每个字需要选字或者空格上屏，则此处的1即表示一个空格的码长
-local codeLenOffset = 1
+-- 自动顶屏码数：四码顶字上屏，设置4；3码顶字上屏，设置为3；如果你不用顶字上屏功能，此处设置为0
+local codeLenOfAutoCommit = 0
 -- 如果你想在平均码长后加以说明，请在这里自定义你的说明内容，可以使用 \n 换行
-local avgCodeLenDesc = '〔含空格〕'
+local avgCodeLenDesc = ''
 -- 定义字词分布进度条填充字符，例如你可以使用 ▉/━/● 来表示
 local progressBarField_word = '▉'
 -- 定义字词分布进度条空白字符，例如你可以使用 ▁/┄/▓ 来表示
@@ -762,7 +762,7 @@ local function init(env)
 	strTable[16] = '◉ 方案：'..schema_name
 	strTable[17] = '◉ 平台：'..software_name..' '..software_version
 	strTable[18] = splitor
-	strTable[19] = '脚本：₂₀₂₅1212・D'
+	strTable[19] = '脚本：₂₀₂₅1213・A'
 	
 	-- 注册提交通知回调
 	env.notifier = env.engine.context.commit_notifier:connect(function(ctx)
@@ -778,6 +778,7 @@ local function init(env)
 		-- 如果是标点符号，则不进行统计
 		if commit_text:match("^[！!@#$％^&?,.;？，。；/0123456789]+$") then return end
 		
+		local codeLen = string.len(ctx.input)
 		local input_length = utf8.len(commit_text) or string.len(commit_text)
 		-- 统计平均分速
 		if 1 == avgSpdInfo.logSts then	-- 如果当前正在统计中
@@ -803,7 +804,10 @@ local function init(env)
 		end
 		
 		-- 上屏统计
-		update_stats(input_length, string.len(ctx.input) + codeLenOffset, 0)
+		if codeLenOfAutoCommit ~= codeLen then
+			codeLen = codeLen + 1
+		end
+		update_stats(input_length, codeLen, 0)
 		save_stats(env.engine.schema.schema_id)
 	end)
 end
