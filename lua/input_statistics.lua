@@ -20,6 +20,9 @@
 再其次，为了让统计数据在输入 /01 时有响应，你需要在方案补丁文件中加入以下👇补丁（让方案捕捉/xx [xx为数字] 这类输入):
   recognizer/patterns/punct: '^/([0-9]+|[A-Za-z]+)$'
 
+最后，做为选项，如果你希望在你的统计消息后追加一个随机的名言，你可以在本脚本所在的目录下创建一个 quote.txt 文档，
+在文档内按行写入你想要展示的名句，本脚本会随机从其中的名句中挑选一个追加在统计消息后。
+
 最后，重新部署你的rime/同文
 
 使用提示（例如/01 /rtj 两种方式均可）：
@@ -49,6 +52,9 @@ local progressBarEmpty_code = '▁'
 
 -- 分配一个变量，用于字符串拼接
 local strTable = {}
+-- 一个用于存放名人名言的表
+local quotes = {}
+local quoteCnt = 0
 -- 分隔线
 local splitor = string.rep("─", 14)
 
@@ -74,6 +80,43 @@ input_stats = input_stats or {
 	daily_max = 0,
 	newWords = {}
 }
+
+function trim(str)
+    if type(str) ~= "string" then
+        return ""  -- 非字符串返回空字符串，也可返回原值/报错，按需调整
+    end
+    return str:match("^%s*(.-)%s*$") or ""
+end
+
+local function currentDir()
+	local info = debug.getinfo(2) --debug.getinfo(2), 2: 返回调用 currentDir 的函数的信息
+	
+	--解析info.source所在的路径
+	local path = info.source
+	path = string.sub(path, 2, -1) -- 去掉开头的"@"
+	path = string.gsub(path,'\\','/') -- 路径格式由 c:\\Users\\san.zhang\\ 转换为 c:/Users/san.zhang/
+	path = string.match(path, "^(.*)/") -- 捕获最后一个 "/" 之前的部分 就是我们最终要的目录部分
+	
+	return path
+end
+
+-- 将指定的文档处理成行数组
+local function files_to_lines(...)
+	local tab=setmetatable({},{__index=table})
+	local index=1
+	for i,filename in next,{...} do
+		local fn = io.open(filename)
+		if fn then
+			for line in fn:lines() do
+				if not line or #line > 0 then
+					tab:insert(line)
+				end
+			end
+			fn:close()
+		end
+	end
+	return tab
+end
 
 -- 定义一个求和函数，用于求取一个table内的数字的和
 local function tableSum(tb)
@@ -320,7 +363,7 @@ local function format_daily_summary()
 	
 	strTable[1] = string.format('※ 日统计@%s', os.date("%Y/%m/%d %H:%M:%S", tBase))
 	strTable[3] = string.format('上屏 %d 次，输入 %d 字', s.count, s.length)
-	strTable[4] = string.format('极速 %.1f，均速 %.1f', fastest, avgV)
+	strTable[4] = string.format('极速 %.1f字/分，%.1f键/秒\n均速 %.1f字/分，%.1f键/秒', fastest, fastest*avgCodeLen/60, avgV, avgV*avgCodeLen/60)
 	strTable[5] = string.format('平均码长 %.1f%s', avgCodeLen, avgCodeLenDesc)
 	strTable[7] = string.format('%s单字%.0f％', progressBar_word(ratio1), ratio1)
 	strTable[8] = string.format('%s2字%.0f％', progressBar_word(ratio2), ratio2)
@@ -345,8 +388,14 @@ local function format_daily_summary()
 	else
 		strTable[14] = ''
 	end
+	
+	if quoteCnt < 1 then
+		strTable[20] = ''
+	else
+		strTable[20] = splitor..'\n'..quotes[math.floor(math.random() * quoteCnt) + 1]
+	end
 
-	return table.concat(strTable, '\n')
+	return trim(table.concat(strTable, '\n'))
 end
 
 -- 显示函数（周统计）
@@ -409,7 +458,7 @@ local function format_weekly_summary()
 	
 	strTable[1] = string.format('※ 周统计@%s', os.date("%Y/%m/%d %H:%M:%S", tBase))
 	strTable[3] = string.format('上屏 %d 次，输入 %d 字', s.count, s.length)
-	strTable[4] = string.format('极速 %.1f，均速 %.1f', fastest, avgV)
+	strTable[4] = string.format('极速 %.1f字/分，%.1f键/秒\n均速 %.1f字/分，%.1f键/秒', fastest, fastest*avgCodeLen/60, avgV, avgV*avgCodeLen/60)
 	strTable[5] = string.format('平均码长 %.1f%s', avgCodeLen, avgCodeLenDesc)
 	strTable[7] = string.format('%s单字%.0f％', progressBar_word(ratio1), ratio1)
 	strTable[8] = string.format('%s2字%.0f％', progressBar_word(ratio2), ratio2)
@@ -435,7 +484,13 @@ local function format_weekly_summary()
 		strTable[14] = ''
 	end
 	
-	return table.concat(strTable, '\n')
+	if quoteCnt < 1 then
+		strTable[20] = ''
+	else
+		strTable[20] = splitor..'\n'..quotes[math.floor(math.random() * quoteCnt) + 1]
+	end
+
+	return trim(table.concat(strTable, '\n'))
 end
 
 -- 显示函数（月统计）
@@ -498,7 +553,7 @@ local function format_monthly_summary()
 	
 	strTable[1] = string.format('※ 月统计@%s', os.date("%Y/%m/%d %H:%M:%S", tBase))
 	strTable[3] = string.format('上屏 %d 次，输入 %d 字', s.count, s.length)
-	strTable[4] = string.format('极速 %.1f，均速 %.1f', fastest, avgV)
+	strTable[4] = string.format('极速 %.1f字/分，%.1f键/秒\n均速 %.1f字/分，%.1f键/秒', fastest, fastest*avgCodeLen/60, avgV, avgV*avgCodeLen/60)
 	strTable[5] = string.format('平均码长 %.1f%s', avgCodeLen, avgCodeLenDesc)
 	strTable[7] = string.format('%s单字%.0f％', progressBar_word(ratio1), ratio1)
 	strTable[8] = string.format('%s2字%.0f％', progressBar_word(ratio2), ratio2)
@@ -524,7 +579,13 @@ local function format_monthly_summary()
 		strTable[14] = ''
 	end
 	
-	return table.concat(strTable, '\n')
+	if quoteCnt < 1 then
+		strTable[20] = ''
+	else
+		strTable[20] = splitor..'\n'..quotes[math.floor(math.random() * quoteCnt) + 1]
+	end
+
+	return trim(table.concat(strTable, '\n'))
 end
 
 -- 显示函数（年统计）
@@ -587,7 +648,7 @@ local function format_yearly_summary()
 	
 	strTable[1] = string.format('※ 年统计@%s', os.date("%Y/%m/%d %H:%M:%S", tBase))
 	strTable[3] = string.format('上屏 %d 次，输入 %d 字', s.count, s.length)
-	strTable[4] = string.format('极速 %.1f，均速 %.1f', fastest, avgV)
+	strTable[4] = string.format('极速 %.1f字/分，%.1f键/秒\n均速 %.1f字/分，%.1f键/秒', fastest, fastest*avgCodeLen/60, avgV, avgV*avgCodeLen/60)
 	strTable[5] = string.format('平均码长 %.1f%s', avgCodeLen, avgCodeLenDesc)
 	strTable[7] = string.format('%s单字%.0f％', progressBar_word(ratio1), ratio1)
 	strTable[8] = string.format('%s2字%.0f％', progressBar_word(ratio2), ratio2)
@@ -613,7 +674,13 @@ local function format_yearly_summary()
 		strTable[14] = ''
 	end
 	
-	return table.concat(strTable, '\n')
+	if quoteCnt < 1 then
+		strTable[20] = ''
+	else
+		strTable[20] = splitor..'\n'..quotes[math.floor(math.random() * quoteCnt) + 1]
+	end
+
+	return trim(table.concat(strTable, '\n'))
 end
 
 -- 显示记录的生字/词
@@ -737,11 +804,27 @@ local function translator(input, seg, env)
 	end
 end
 
+-- 加载文档里的短语短句
+local function quoteLoad()
+	local quoteFile = currentDir().."/quote.txt"
+	
+	local lines=files_to_lines(quoteFile)
+	for i,line in next ,lines do
+		table.insert(quotes, line)
+		quoteCnt = quoteCnt + 1
+	end
+end
+
 local function init(env)
 	local schema_name = env.engine.schema.schema_name or '未知'
 	local ctx = env.engine.context
 	-- 加载指定输入方案的历史统计数据
 	load_stats_from_lua_file(env.engine.schema.schema_id)
+	-- 加载名人名言
+	quoteLoad()
+	
+	-- 初始化随机数种子
+	math.randomseed(os.time())
 	
 	-- 初始化统计字符串
 	strTable[1] = ''
@@ -762,7 +845,8 @@ local function init(env)
 	strTable[16] = '◉ 方案：'..schema_name
 	strTable[17] = '◉ 平台：'..software_name..' '..software_version
 	strTable[18] = splitor
-	strTable[19] = '脚本：₂₀₂₅1213・A'
+	strTable[19] = '脚本：₂₀₂₅1214・A'
+	strTable[20] = ''
 	
 	-- 注册提交通知回调
 	env.notifier = env.engine.context.commit_notifier:connect(function(ctx)
