@@ -63,6 +63,7 @@ local skinList = {
 	{ field = '━', empty = '□' }, -- 皮肤18
 	{ field = '●', empty = '△' }, -- 皮肤19
 	{ field = '■', empty = '◇' }, -- 皮肤20
+	{ field = '★', empty = '✩' }, -- 皮肤21
 }
 
 -- 指定字词统计条的皮肤索引（从1开始）
@@ -76,7 +77,8 @@ local strTable = {}
 local quotes = {}
 local quoteCnt = 0
 -- 分隔线
-local splitor = string.rep("─", 14)
+local splitorLen = 14
+local splitor = string.rep("─", splitorLen)
 
 -- 下面的信息是自动获取的
 local software_name = rime_api.get_distribution_code_name()
@@ -196,6 +198,13 @@ local function progressBar_word(p)
 end
 
 -- 时间戳工具函数
+local function get_timezone()	-- 计算时区偏移
+    local local_t = os.date("*t")
+    local local_ts = os.time(local_t)
+    local utc_ts = os.time(os.date("!*t", local_ts))
+    local offset_hour = (local_ts - utc_ts) / 3600
+	return string.format("UTC%+d", offset_hour)
+end
 local function start_of_day(t)
 	return os.time{year=t.year, month=t.month, day=t.day, hour=0}
 end
@@ -385,6 +394,20 @@ local function format_daily_summary()
 		if avgV > fastest then fastest = avgV end
 	end
 	
+	-- 处理时区问题
+	local timeZone = get_timezone()
+	local timeZoneLen = string.len(timeZone)
+	if splitorLen - 1 > timeZoneLen + 1 then
+		local halfLen = 0.5 * (splitorLen - 1 - timeZoneLen)
+		local halfLenFloor = math.floor(halfLen)
+		if halfLen > halfLenFloor then
+			timeZone = string.rep('─', halfLenFloor)..timeZone..string.rep('─', splitorLen-timeZoneLen-halfLenFloor)
+		else
+			timeZone = string.rep('─', halfLenFloor)..timeZone..string.rep('─', splitorLen-timeZoneLen-halfLenFloor - 1)
+		end
+	end
+	strTable[2] = '📈'..timeZone
+	
 	strTable[1] = string.format('※ 日统计@%s', os.date("%Y/%m/%d %H:%M:%S", tBase))
 	strTable[3] = string.format('上屏 %d 次，输入 %d 字', s.count, s.length)
 	strTable[4] = string.format('极速 %.1f字/分，%.1f键/秒\n均速 %.1f字/分，%.1f键/秒', fastest, fastest*avgCodeLen/60, avgV, avgV*avgCodeLen/60)
@@ -479,6 +502,20 @@ local function format_weekly_summary()
 		avgV = tableSum(input_stats.weekly.avgCnts) / avgV * 60
 		if avgV > fastest then fastest = avgV end
 	end
+	
+	-- 处理时区问题
+	local timeZone = get_timezone()
+	local timeZoneLen = string.len(timeZone)
+	if splitorLen - 1 > timeZoneLen + 1 then
+		local halfLen = 0.5 * (splitorLen - 1 - timeZoneLen)
+		local halfLenFloor = math.floor(halfLen)
+		if halfLen > halfLenFloor then
+			timeZone = string.rep('─', halfLenFloor)..timeZone..string.rep('─', splitorLen-timeZoneLen-halfLenFloor)
+		else
+			timeZone = string.rep('─', halfLenFloor)..timeZone..string.rep('─', splitorLen-timeZoneLen-halfLenFloor - 1)
+		end
+	end
+	strTable[2] = '📈'..timeZone
 	
 	strTable[1] = string.format('※ 周统计@%s', os.date("%Y/%m/%d %H:%M:%S", tBase))
 	strTable[3] = string.format('上屏 %d 次，输入 %d 字', s.count, s.length)
@@ -575,6 +612,20 @@ local function format_monthly_summary()
 		if avgV > fastest then fastest = avgV end
 	end
 	
+	-- 处理时区问题
+	local timeZone = get_timezone()
+	local timeZoneLen = string.len(timeZone)
+	if splitorLen - 1 > timeZoneLen + 1 then
+		local halfLen = 0.5 * (splitorLen - 1 - timeZoneLen)
+		local halfLenFloor = math.floor(halfLen)
+		if halfLen > halfLenFloor then
+			timeZone = string.rep('─', halfLenFloor)..timeZone..string.rep('─', splitorLen-timeZoneLen-halfLenFloor)
+		else
+			timeZone = string.rep('─', halfLenFloor)..timeZone..string.rep('─', splitorLen-timeZoneLen-halfLenFloor - 1)
+		end
+	end
+	strTable[2] = '📈'..timeZone
+	
 	strTable[1] = string.format('※ 月统计@%s', os.date("%Y/%m/%d %H:%M:%S", tBase))
 	strTable[3] = string.format('上屏 %d 次，输入 %d 字', s.count, s.length)
 	strTable[4] = string.format('极速 %.1f字/分，%.1f键/秒\n均速 %.1f字/分，%.1f键/秒', fastest, fastest*avgCodeLen/60, avgV, avgV*avgCodeLen/60)
@@ -669,6 +720,20 @@ local function format_yearly_summary()
 		avgV = tableSum(input_stats.yearly.avgCnts) / avgV * 60
 		if avgV > fastest then fastest = avgV end
 	end
+	
+	-- 处理时区问题
+	local timeZone = get_timezone()
+	local timeZoneLen = string.len(timeZone)
+	if splitorLen - 1 > timeZoneLen + 1 then
+		local halfLen = 0.5 * (splitorLen - 1 - timeZoneLen)
+		local halfLenFloor = math.floor(halfLen)
+		if halfLen > halfLenFloor then
+			timeZone = string.rep('─', halfLenFloor)..timeZone..string.rep('─', splitorLen-timeZoneLen-halfLenFloor)
+		else
+			timeZone = string.rep('─', halfLenFloor)..timeZone..string.rep('─', splitorLen-timeZoneLen-halfLenFloor - 1)
+		end
+	end
+	strTable[2] = '📈'..timeZone
 	
 	strTable[1] = string.format('※ 年统计@%s', os.date("%Y/%m/%d %H:%M:%S", tBase))
 	strTable[3] = string.format('上屏 %d 次，输入 %d 字', s.count, s.length)
@@ -852,7 +917,7 @@ local function init(env)
 	
 	-- 初始化统计字符串
 	strTable[1] = ''
-	strTable[2] = '📈'..string.rep("─", 13)
+	strTable[2] = ''
 	strTable[3] = ''
 	strTable[4] = ''
 	strTable[5] = ''
@@ -869,7 +934,7 @@ local function init(env)
 	strTable[16] = '◉ 方案：'..schema_name
 	strTable[17] = '◉ 平台：'..software_name..' '..software_version
 	strTable[18] = splitor
-	strTable[19] = '脚本：₂₀₂₅1215・B'
+	strTable[19] = '脚本：₂₀₂₅1215・C'
 	strTable[20] = ''
 	
 	-- 注册提交通知回调
