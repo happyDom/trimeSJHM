@@ -33,6 +33,7 @@
 /05 /sztj		 查看生字/词
 /008 /qcsz	清除生字/词
 /009 /qctj	 清除所有统计数据
+/600 /pf	查看统计进度条皮肤（消息会显示切换皮肤的命令用法）
 ]]
 
 -- 卡壳时间门限(单位：s)，当上屏的字/词距离前一次上屏时间大于该门限时，该字/词被记录为生字/词组数据
@@ -64,6 +65,7 @@ local skinList = {
 	{ field = '●', empty = '△' }, -- 皮肤19
 	{ field = '■', empty = '◇' }, -- 皮肤20
 	{ field = '★', empty = '✩' }, -- 皮肤21
+	{ field = '✭', empty = '✩' }, -- 皮肤22
 }
 
 -- 指定字词统计条的皮肤索引（从1开始）
@@ -336,6 +338,106 @@ local function save_stats(schema_id)
 	file:close()
 end
 
+-- 格式化皮肤列表，5个皮肤为一组显示〔from 落羽行歌〕
+local function formatSkinList()
+	local skinListText = {}
+	table.insert(skinListText, "※ 可用皮肤列表：")
+	
+	local pfIdxa = 0
+	local pfIdxb = 0
+	
+	for i=1, #skinList do
+		local prefix = (progressBarSkinIdx_word == i) and 'w ' or '- '
+		prefix = prefix..((progressBarSkinIdx_code == i) and 'c ' or '- ')
+		pfIdxa = math.floor(i/10)
+		pfIdxb = i - pfIdxa * 10
+		local skinStr = string.format("%s/6[12]%02d /pf[wc]%s%s %s%s", prefix, i, string.char(97+pfIdxa), string.char(97+pfIdxb), string.rep(skinList[i].field, 2), string.rep(skinList[i].empty, 2))
+		table.insert(skinListText, skinStr)
+	end
+
+	table.insert(skinListText, "● 当前皮肤 / ○ 可选皮肤")
+	table.insert(skinListText, "输入 /600 或 /pf 查看皮肤列表")
+	table.insert(skinListText, "输入 /61xx 或 /pfwyy 切换字词统计皮肤(xx为数字，yy为字母)")
+	table.insert(skinListText, "输入 /62xx 或 /pfcyy 切换码长统计皮肤(xx为数字，yy为字母)")
+
+	return table.concat(skinListText, "\n"):gsub("\n+", "\n"):gsub("^%n", ""):gsub("%n$", "")
+end
+
+-- 格式化统计头部信息〔from 落羽行歌〕
+local function format_statistics_header(stat_type, tBase, s, fastest, avgV, avgCodeLen, avgCodeLenDesc)
+	-- 处理时区问题
+	local timeZone = get_timezone()
+	local timeZoneLen = string.len(timeZone)
+	if splitorLen > timeZoneLen + 1 then
+		local halfLen = 0.5 * (splitorLen - timeZoneLen)
+		local halfLenFloor = math.floor(halfLen)
+		if halfLen > halfLenFloor then
+			timeZone = string.rep('─', halfLenFloor)..timeZone..string.rep('─', splitorLen-timeZoneLen-halfLenFloor + 1)
+		else
+			timeZone = string.rep('─', halfLenFloor)..timeZone..string.rep('─', splitorLen-timeZoneLen-halfLenFloor)
+		end
+	end
+	strTable[2] = '📈'..timeZone
+
+	strTable[1] = string.format('※ %s@%s', stat_type, os.date("%Y/%m/%d %H:%M:%S", tBase))
+	strTable[3] = string.format('上屏 %d 次，输入 %d 字', s.count, s.length)
+	-- 显示击键信息 〔from Chopper〕
+	strTable[4] = string.format('极速 %.1f字/分，%.1f键/秒\n均速 %.1f字/分，%.1f键/秒', fastest, fastest * avgCodeLen / 60, avgV, avgV * avgCodeLen / 60)
+	strTable[5] = string.format('平均码长：%.1f%s', avgCodeLen, avgCodeLenDesc)
+end
+
+-- 格式化字长统计（单字、2字、>2字）〔from 落羽行歌〕
+local function format_word_length_stats(ratio1, ratio2, ratio3)
+	if ratio1 > 0 then
+		strTable[7] = string.format('%s单字%.0f％', progressBar_word(ratio1), ratio1)
+	else
+		strTable[7] = ''
+	end
+	if ratio2 > 0 then
+		strTable[8] = string.format('%s2字%.0f％', progressBar_word(ratio2), ratio2)
+	else
+		strTable[8] = ''
+	end
+	if ratio3 > 0 then
+		strTable[9] = string.format('%s>2字%.0f％', progressBar_word(ratio3), ratio3)
+	else
+		strTable[9] = ''
+	end
+end
+
+-- 格式化码长统计 〔from 落羽行歌〕
+local function format_code_length_stats(codeTableFirstN)
+	if codeTableFirstN[1].ratio > 0 then
+		strTable[11] = string.format('%s%s码%.0f％', progressBar_code(codeTableFirstN[1].ratio), codeTableFirstN[1].codeLen, codeTableFirstN[1].ratio)
+	else
+		strTable[11] = ''
+	end
+	if codeTableFirstN[2].ratio > 0 then
+		strTable[12] = string.format('%s%s码%.0f％', progressBar_code(codeTableFirstN[2].ratio), codeTableFirstN[2].codeLen, codeTableFirstN[2].ratio)
+	else
+		strTable[12] = ''
+	end
+	if codeTableFirstN[3].ratio > 0 then
+		strTable[13] = string.format('%s%s码%.0f％', progressBar_code(codeTableFirstN[3].ratio), codeTableFirstN[3].codeLen, codeTableFirstN[3].ratio)
+	else
+		strTable[13] = ''
+	end
+	if codeTableFirstN[4].ratio > 0 then
+		strTable[14] = string.format('%s其它%.0f％', progressBar_code(codeTableFirstN[4].ratio), codeTableFirstN[4].ratio)
+	else
+		strTable[14] = ''
+	end
+end
+
+-- 辅助函数：格式化统计尾部（名人名言）〔from 落羽行歌〕
+local function format_statistics_footer()
+	if quoteCnt < 1 then
+		strTable[20] = ''
+	else
+		strTable[20] = splitor..'\n'..quotes[math.floor(math.random() * quoteCnt) + 1]
+	end
+end
+
 -- 显示函数（日统计）
 local function format_daily_summary()
 	local s = input_stats.daily
@@ -394,66 +496,15 @@ local function format_daily_summary()
 		if avgV > fastest then fastest = avgV end
 	end
 	
-	-- 处理时区问题
-	local timeZone = get_timezone()
-	local timeZoneLen = string.len(timeZone)
-	if splitorLen > timeZoneLen + 1 then
-		local halfLen = 0.5 * (splitorLen - timeZoneLen)
-		local halfLenFloor = math.floor(halfLen)
-		if halfLen > halfLenFloor then
-			timeZone = string.rep('─', halfLenFloor)..timeZone..string.rep('─', splitorLen-timeZoneLen-halfLenFloor + 1)
-		else
-			timeZone = string.rep('─', halfLenFloor)..timeZone..string.rep('─', splitorLen-timeZoneLen-halfLenFloor)
-		end
-	end
-	strTable[2] = '📈'..timeZone
+	-- 使用辅助函数格式化统计头部信息
+	format_statistics_header("日统计", tBase, s, fastest, avgV, avgCodeLen, avgCodeLenDesc)
+	-- 使用辅助函数格式化字长统计
+	format_word_length_stats(ratio1, ratio2, ratio3)
+	-- 使用辅助函数格式化码长统计
+	format_code_length_stats(codeTableFirstN)
+	-- 使用辅助函数格式化统计尾部
+	format_statistics_footer()
 	
-	strTable[1] = string.format('※ 日统计@%s', os.date("%Y/%m/%d %H:%M:%S", tBase))
-	strTable[3] = string.format('上屏 %d 次，输入 %d 字', s.count, s.length)
-	strTable[4] = string.format('极速 %.1f字/分，%.1f键/秒\n均速 %.1f字/分，%.1f键/秒', fastest, fastest*avgCodeLen/60, avgV, avgV*avgCodeLen/60)
-	strTable[5] = string.format('平均码长 %.1f%s', avgCodeLen, avgCodeLenDesc)
-	if ratio1 > 0 then
-		strTable[7] = string.format('%s单字%.0f％', progressBar_word(ratio1), ratio1)
-	else
-		strTable[7] = ''
-	end
-	if ratio2 > 0 then
-		strTable[8] = string.format('%s2字%.0f％', progressBar_word(ratio2), ratio2)
-	else
-		strTable[8] = ''
-	end
-	if ratio3 > 0 then
-		strTable[9] = string.format('%s>2字%.0f％', progressBar_word(ratio3), ratio3)
-	else
-		strTable[9] = ''
-	end
-	if codeTableFirstN[1].ratio > 0 then
-		strTable[11] = string.format('%s%s码%.0f％', progressBar_code(codeTableFirstN[1].ratio), codeTableFirstN[1].codeLen, codeTableFirstN[1].ratio)
-	else
-		strTable[11] = ''
-	end
-	if codeTableFirstN[2].ratio > 0 then
-		strTable[12] = string.format('%s%s码%.0f％', progressBar_code(codeTableFirstN[2].ratio), codeTableFirstN[2].codeLen, codeTableFirstN[2].ratio)
-	else
-		strTable[12] = ''
-	end
-	if codeTableFirstN[3].ratio > 0 then
-		strTable[13] = string.format('%s%s码%.0f％', progressBar_code(codeTableFirstN[3].ratio), codeTableFirstN[3].codeLen, codeTableFirstN[3].ratio)
-	else
-		strTable[13] = ''
-	end
-	if codeTableFirstN[4].ratio > 0 then
-		strTable[14] = string.format('%s其它%.0f％', progressBar_code(codeTableFirstN[4].ratio), codeTableFirstN[4].ratio)
-	else
-		strTable[14] = ''
-	end
-	
-	if quoteCnt < 1 then
-		strTable[20] = ''
-	else
-		strTable[20] = splitor..'\n'..quotes[math.floor(math.random() * quoteCnt) + 1]
-	end
-
 	return trim(table.concat(strTable, '\n'):gsub("\n+", "\n"):gsub("^%n", ""):gsub("%n$", ""))
 end
 
@@ -515,65 +566,14 @@ local function format_weekly_summary()
 		if avgV > fastest then fastest = avgV end
 	end
 	
-	-- 处理时区问题
-	local timeZone = get_timezone()
-	local timeZoneLen = string.len(timeZone)
-	if splitorLen > timeZoneLen + 1 then
-		local halfLen = 0.5 * (splitorLen - timeZoneLen)
-		local halfLenFloor = math.floor(halfLen)
-		if halfLen > halfLenFloor then
-			timeZone = string.rep('─', halfLenFloor)..timeZone..string.rep('─', splitorLen-timeZoneLen-halfLenFloor + 1)
-		else
-			timeZone = string.rep('─', halfLenFloor)..timeZone..string.rep('─', splitorLen-timeZoneLen-halfLenFloor)
-		end
-	end
-	strTable[2] = '📈'..timeZone
-	
-	strTable[1] = string.format('※ 周统计@%s', os.date("%Y/%m/%d %H:%M:%S", tBase))
-	strTable[3] = string.format('上屏 %d 次，输入 %d 字', s.count, s.length)
-	strTable[4] = string.format('极速 %.1f字/分，%.1f键/秒\n均速 %.1f字/分，%.1f键/秒', fastest, fastest*avgCodeLen/60, avgV, avgV*avgCodeLen/60)
-	strTable[5] = string.format('平均码长 %.1f%s', avgCodeLen, avgCodeLenDesc)
-	if ratio1 > 0 then
-		strTable[7] = string.format('%s单字%.0f％', progressBar_word(ratio1), ratio1)
-	else
-		strTable[7] = ''
-	end
-	if ratio2 > 0 then
-		strTable[8] = string.format('%s2字%.0f％', progressBar_word(ratio2), ratio2)
-	else
-		strTable[8] = ''
-	end
-	if ratio3 > 0 then
-		strTable[9] = string.format('%s>2字%.0f％', progressBar_word(ratio3), ratio3)
-	else
-		strTable[9] = ''
-	end
-	if codeTableFirstN[1].ratio > 0 then
-		strTable[11] = string.format('%s%s码%.0f％', progressBar_code(codeTableFirstN[1].ratio), codeTableFirstN[1].codeLen, codeTableFirstN[1].ratio)
-	else
-		strTable[11] = ''
-	end
-	if codeTableFirstN[2].ratio > 0 then
-		strTable[12] = string.format('%s%s码%.0f％', progressBar_code(codeTableFirstN[2].ratio), codeTableFirstN[2].codeLen, codeTableFirstN[2].ratio)
-	else
-		strTable[12] = ''
-	end
-	if codeTableFirstN[3].ratio > 0 then
-		strTable[13] = string.format('%s%s码%.0f％', progressBar_code(codeTableFirstN[3].ratio), codeTableFirstN[3].codeLen, codeTableFirstN[3].ratio)
-	else
-		strTable[13] = ''
-	end
-	if codeTableFirstN[4].ratio > 0 then
-		strTable[14] = string.format('%s其它%.0f％', progressBar_code(codeTableFirstN[4].ratio), codeTableFirstN[4].ratio)
-	else
-		strTable[14] = ''
-	end
-	
-	if quoteCnt < 1 then
-		strTable[20] = ''
-	else
-		strTable[20] = splitor..'\n'..quotes[math.floor(math.random() * quoteCnt) + 1]
-	end
+	-- 使用辅助函数格式化统计头部信息
+	format_statistics_header("周统计", tBase, s, fastest, avgV, avgCodeLen, avgCodeLenDesc)
+	-- 使用辅助函数格式化字长统计
+	format_word_length_stats(ratio1, ratio2, ratio3)
+	-- 使用辅助函数格式化码长统计
+	format_code_length_stats(codeTableFirstN)
+	-- 使用辅助函数格式化统计尾部
+	format_statistics_footer()
 
 	return trim(table.concat(strTable, '\n'):gsub("\n+", "\n"):gsub("^%n", ""):gsub("%n$", ""))
 end
@@ -636,65 +636,14 @@ local function format_monthly_summary()
 		if avgV > fastest then fastest = avgV end
 	end
 	
-	-- 处理时区问题
-	local timeZone = get_timezone()
-	local timeZoneLen = string.len(timeZone)
-	if splitorLen > timeZoneLen + 1 then
-		local halfLen = 0.5 * (splitorLen - timeZoneLen)
-		local halfLenFloor = math.floor(halfLen)
-		if halfLen > halfLenFloor then
-			timeZone = string.rep('─', halfLenFloor)..timeZone..string.rep('─', splitorLen-timeZoneLen-halfLenFloor + 1)
-		else
-			timeZone = string.rep('─', halfLenFloor)..timeZone..string.rep('─', splitorLen-timeZoneLen-halfLenFloor)
-		end
-	end
-	strTable[2] = '📈'..timeZone
-	
-	strTable[1] = string.format('※ 月统计@%s', os.date("%Y/%m/%d %H:%M:%S", tBase))
-	strTable[3] = string.format('上屏 %d 次，输入 %d 字', s.count, s.length)
-	strTable[4] = string.format('极速 %.1f字/分，%.1f键/秒\n均速 %.1f字/分，%.1f键/秒', fastest, fastest*avgCodeLen/60, avgV, avgV*avgCodeLen/60)
-	strTable[5] = string.format('平均码长 %.1f%s', avgCodeLen, avgCodeLenDesc)
-	if ratio1 > 0 then
-		strTable[7] = string.format('%s单字%.0f％', progressBar_word(ratio1), ratio1)
-	else
-		strTable[7] = ''
-	end
-	if ratio2 > 0 then
-		strTable[8] = string.format('%s2字%.0f％', progressBar_word(ratio2), ratio2)
-	else
-		strTable[8] = ''
-	end
-	if ratio3 > 0 then
-		strTable[9] = string.format('%s>2字%.0f％', progressBar_word(ratio3), ratio3)
-	else
-		strTable[9] = ''
-	end
-	if codeTableFirstN[1].ratio > 0 then
-		strTable[11] = string.format('%s%s码%.0f％', progressBar_code(codeTableFirstN[1].ratio), codeTableFirstN[1].codeLen, codeTableFirstN[1].ratio)
-	else
-		strTable[11] = ''
-	end
-	if codeTableFirstN[2].ratio > 0 then
-		strTable[12] = string.format('%s%s码%.0f％', progressBar_code(codeTableFirstN[2].ratio), codeTableFirstN[2].codeLen, codeTableFirstN[2].ratio)
-	else
-		strTable[12] = ''
-	end
-	if codeTableFirstN[3].ratio > 0 then
-		strTable[13] = string.format('%s%s码%.0f％', progressBar_code(codeTableFirstN[3].ratio), codeTableFirstN[3].codeLen, codeTableFirstN[3].ratio)
-	else
-		strTable[13] = ''
-	end
-	if codeTableFirstN[4].ratio > 0 then
-		strTable[14] = string.format('%s其它%.0f％', progressBar_code(codeTableFirstN[4].ratio), codeTableFirstN[4].ratio)
-	else
-		strTable[14] = ''
-	end
-	
-	if quoteCnt < 1 then
-		strTable[20] = ''
-	else
-		strTable[20] = splitor..'\n'..quotes[math.floor(math.random() * quoteCnt) + 1]
-	end
+	-- 使用辅助函数格式化统计头部信息
+	format_statistics_header("月统计", tBase, s, fastest, avgV, avgCodeLen, avgCodeLenDesc)
+	-- 使用辅助函数格式化字长统计
+	format_word_length_stats(ratio1, ratio2, ratio3)
+	-- 使用辅助函数格式化码长统计
+	format_code_length_stats(codeTableFirstN)
+	-- 使用辅助函数格式化统计尾部
+	format_statistics_footer()
 
 	return trim(table.concat(strTable, '\n'):gsub("\n+", "\n"):gsub("^%n", ""):gsub("%n$", ""))
 end
@@ -757,65 +706,14 @@ local function format_yearly_summary()
 		if avgV > fastest then fastest = avgV end
 	end
 	
-	-- 处理时区问题
-	local timeZone = get_timezone()
-	local timeZoneLen = string.len(timeZone)
-	if splitorLen > timeZoneLen + 1 then
-		local halfLen = 0.5 * (splitorLen - timeZoneLen)
-		local halfLenFloor = math.floor(halfLen)
-		if halfLen > halfLenFloor then
-			timeZone = string.rep('─', halfLenFloor)..timeZone..string.rep('─', splitorLen-timeZoneLen-halfLenFloor + 1)
-		else
-			timeZone = string.rep('─', halfLenFloor)..timeZone..string.rep('─', splitorLen-timeZoneLen-halfLenFloor)
-		end
-	end
-	strTable[2] = '📈'..timeZone
-	
-	strTable[1] = string.format('※ 年统计@%s', os.date("%Y/%m/%d %H:%M:%S", tBase))
-	strTable[3] = string.format('上屏 %d 次，输入 %d 字', s.count, s.length)
-	strTable[4] = string.format('极速 %.1f字/分，%.1f键/秒\n均速 %.1f字/分，%.1f键/秒', fastest, fastest*avgCodeLen/60, avgV, avgV*avgCodeLen/60)
-	strTable[5] = string.format('平均码长 %.1f%s', avgCodeLen, avgCodeLenDesc)
-	if ratio1 > 0 then
-		strTable[7] = string.format('%s单字%.0f％', progressBar_word(ratio1), ratio1)
-	else
-		strTable[7] = ''
-	end
-	if ratio2 > 0 then
-		strTable[8] = string.format('%s2字%.0f％', progressBar_word(ratio2), ratio2)
-	else
-		strTable[8] = ''
-	end
-	if ratio3 > 0 then
-		strTable[9] = string.format('%s>2字%.0f％', progressBar_word(ratio3), ratio3)
-	else
-		strTable[9] = ''
-	end
-	if codeTableFirstN[1].ratio > 0 then
-		strTable[11] = string.format('%s%s码%.0f％', progressBar_code(codeTableFirstN[1].ratio), codeTableFirstN[1].codeLen, codeTableFirstN[1].ratio)
-	else
-		strTable[11] = ''
-	end
-	if codeTableFirstN[2].ratio > 0 then
-		strTable[12] = string.format('%s%s码%.0f％', progressBar_code(codeTableFirstN[2].ratio), codeTableFirstN[2].codeLen, codeTableFirstN[2].ratio)
-	else
-		strTable[12] = ''
-	end
-	if codeTableFirstN[3].ratio > 0 then
-		strTable[13] = string.format('%s%s码%.0f％', progressBar_code(codeTableFirstN[3].ratio), codeTableFirstN[3].codeLen, codeTableFirstN[3].ratio)
-	else
-		strTable[13] = ''
-	end
-	if codeTableFirstN[4].ratio > 0 then
-		strTable[14] = string.format('%s其它%.0f％', progressBar_code(codeTableFirstN[4].ratio), codeTableFirstN[4].ratio)
-	else
-		strTable[14] = ''
-	end
-	
-	if quoteCnt < 1 then
-		strTable[20] = ''
-	else
-		strTable[20] = splitor..'\n'..quotes[math.floor(math.random() * quoteCnt) + 1]
-	end
+	-- 使用辅助函数格式化统计头部信息
+	format_statistics_header("年统计", tBase, s, fastest, avgV, avgCodeLen, avgCodeLenDesc)
+	-- 使用辅助函数格式化字长统计
+	format_word_length_stats(ratio1, ratio2, ratio3)
+	-- 使用辅助函数格式化码长统计
+	format_code_length_stats(codeTableFirstN)
+	-- 使用辅助函数格式化统计尾部
+	format_statistics_footer()
 
 	return trim(table.concat(strTable, '\n'):gsub("\n+", "\n"):gsub("^%n", ""):gsub("%n$", ""))
 end
@@ -828,7 +726,7 @@ local function format_shengzi()
 	
 	local tmpTable = {}
 	local newWords = {}
-	local verStr = strTable[#strTable]
+	local verStr = strTable[#strTable-1]
 	local cnt = 0
 	local i = 1
 	tmpTable[1] = ""
@@ -844,7 +742,7 @@ local function format_shengzi()
 	tmpTable[i + 2] = table.concat(newWords, '，')
 	tmpTable[i + 3] = splitor
 	tmpTable[i + 4] = verStr
-	
+
 	if i < 2 then
 		return string.format("※ 未发现生字/词记录。")
 	else
@@ -934,6 +832,54 @@ local function translator(input, seg, env)
 		}
 		save_stats(env.engine.schema.schema_id)
 		summary = "※ 所有统计数据已清空。"
+	elseif ({['/61']=true,['/62']=true, ['/pf']=true})[input:sub(1, 3)] or ({['/600']=true,['/pfw']=true, ['/pfc']=true})[input:sub(1, 4)] then
+		if (input == "/600") or (input == "/pf") then	-- 展示皮肤列表
+			summary = formatSkinList()
+		elseif input:match("^/61(%d%d)$") then		-- 设置字词统计皮肤
+			local skinIndex = tonumber(input:match("^/61(%d%d)$"))
+			if skinIndex and skinIndex >= 1 and skinIndex <= #skinList then
+				progressBarSkinIdx_word = skinIndex
+				progressBarField_word = skinList[progressBarSkinIdx_word].field
+				progressBarEmpty_word = skinList[progressBarSkinIdx_word].empty
+				summary = string.format("※ 字词统计皮肤已切换至：/61%02d %s%s",
+					skinIndex, progressBarField_word, progressBarEmpty_word)
+			else
+				summary = "※ 无效的皮肤编号〔"..input:sub(4,5)..'〕'
+			end
+		elseif input:match("^/62(%d%d)$") then		-- 设置码长统计皮肤
+			local skinIndex = tonumber(input:match("^/62(%d%d)$"))
+			if skinIndex and skinIndex >= 1 and skinIndex <= #skinList then
+				progressBarSkinIdx_code = skinIndex
+				progressBarField_code = skinList[progressBarSkinIdx_code].field
+				progressBarEmpty_code = skinList[progressBarSkinIdx_code].empty
+				summary = string.format("※ 码长皮肤已切换至：/61%02d %s%s",
+					skinIndex, progressBarField_code, progressBarEmpty_code)
+			else
+				summary = "※ 无效的皮肤编号〔"..input:sub(4,5)..'〕'
+			end
+		elseif input:match("^/pfw[a-z][a-z]$") then		-- 设置字词统计皮肤
+			local skinIndex = (string.byte(input:sub(5,5)) - 97) * 10 + string.byte(input:sub(6,6)) - 97
+			if skinIndex and skinIndex >= 1 and skinIndex <= #skinList then
+				progressBarSkinIdx_word = skinIndex
+				progressBarField_word = skinList[progressBarSkinIdx_word].field
+				progressBarEmpty_word = skinList[progressBarSkinIdx_word].empty
+				summary = string.format("※ 字词统计皮肤已切换至：/pfw%s %s%s",
+					input:sub(5,6), progressBarField_word, progressBarEmpty_word)
+			else
+				summary = "※ 无效的皮肤编号〔"..input:sub(5,6)..'〕'
+			end
+		elseif input:match("^/pfc[a-z][a-z]$") then		-- 设置字词统计皮肤
+			local skinIndex = (string.byte(input:sub(5,5)) - 97) * 10 + string.byte(input:sub(6,6)) - 97
+			if skinIndex and skinIndex >= 1 and skinIndex <= #skinList then
+				progressBarSkinIdx_code = skinIndex
+				progressBarField_code = skinList[progressBarSkinIdx_code].field
+				progressBarEmpty_code = skinList[progressBarSkinIdx_code].empty
+				summary = string.format("※ 码长皮肤已切换至：/pfc%s %s%s",
+					input:sub(5,6), progressBarField_code, progressBarEmpty_code)
+			else
+				summary = "※ 无效的皮肤编号〔"..input:sub(5,6)..'〕'
+			end
+		end
 	end
 
 	if summary ~= "" then
@@ -982,7 +928,7 @@ local function init(env)
 	strTable[16] = '◉ 方案：'..schema_name
 	strTable[17] = '◉ 平台：'..software_name..' '..software_version
 	strTable[18] = splitor
-	strTable[19] = '脚本：₂₀₂₅1215・E'
+	strTable[19] = '脚本：₂₀₂₅1215・F'
 	strTable[20] = ''
 	
 	-- 注册提交通知回调
