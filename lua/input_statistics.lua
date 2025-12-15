@@ -412,9 +412,21 @@ local function format_daily_summary()
 	strTable[3] = string.format('上屏 %d 次，输入 %d 字', s.count, s.length)
 	strTable[4] = string.format('极速 %.1f字/分，%.1f键/秒\n均速 %.1f字/分，%.1f键/秒', fastest, fastest*avgCodeLen/60, avgV, avgV*avgCodeLen/60)
 	strTable[5] = string.format('平均码长 %.1f%s', avgCodeLen, avgCodeLenDesc)
-	strTable[7] = string.format('%s单字%.0f％', progressBar_word(ratio1), ratio1)
-	strTable[8] = string.format('%s2字%.0f％', progressBar_word(ratio2), ratio2)
-	strTable[9] = string.format('%s>2字%.0f％', progressBar_word(ratio3), ratio3)
+	if ratio1 > 0 then
+		strTable[7] = string.format('%s单字%.0f％', progressBar_word(ratio1), ratio1)
+	else
+		strTable[7] = ''
+	end
+	if ratio2 > 0 then
+		strTable[8] = string.format('%s2字%.0f％', progressBar_word(ratio2), ratio2)
+	else
+		strTable[8] = ''
+	end
+	if ratio3 > 0 then
+		strTable[9] = string.format('%s>2字%.0f％', progressBar_word(ratio3), ratio3)
+	else
+		strTable[9] = ''
+	end
 	if codeTableFirstN[1].ratio > 0 then
 		strTable[11] = string.format('%s%s码%.0f％', progressBar_code(codeTableFirstN[1].ratio), codeTableFirstN[1].codeLen, codeTableFirstN[1].ratio)
 	else
@@ -442,7 +454,7 @@ local function format_daily_summary()
 		strTable[20] = splitor..'\n'..quotes[math.floor(math.random() * quoteCnt) + 1]
 	end
 
-	return trim(table.concat(strTable, '\n'))
+	return trim(table.concat(strTable, '\n'):gsub("\n+", "\n"):gsub("^%n", ""):gsub("%n$", ""))
 end
 
 -- 显示函数（周统计）
@@ -521,9 +533,21 @@ local function format_weekly_summary()
 	strTable[3] = string.format('上屏 %d 次，输入 %d 字', s.count, s.length)
 	strTable[4] = string.format('极速 %.1f字/分，%.1f键/秒\n均速 %.1f字/分，%.1f键/秒', fastest, fastest*avgCodeLen/60, avgV, avgV*avgCodeLen/60)
 	strTable[5] = string.format('平均码长 %.1f%s', avgCodeLen, avgCodeLenDesc)
-	strTable[7] = string.format('%s单字%.0f％', progressBar_word(ratio1), ratio1)
-	strTable[8] = string.format('%s2字%.0f％', progressBar_word(ratio2), ratio2)
-	strTable[9] = string.format('%s>2字%.0f％', progressBar_word(ratio3), ratio3)
+	if ratio1 > 0 then
+		strTable[7] = string.format('%s单字%.0f％', progressBar_word(ratio1), ratio1)
+	else
+		strTable[7] = ''
+	end
+	if ratio2 > 0 then
+		strTable[8] = string.format('%s2字%.0f％', progressBar_word(ratio2), ratio2)
+	else
+		strTable[8] = ''
+	end
+	if ratio3 > 0 then
+		strTable[9] = string.format('%s>2字%.0f％', progressBar_word(ratio3), ratio3)
+	else
+		strTable[9] = ''
+	end
 	if codeTableFirstN[1].ratio > 0 then
 		strTable[11] = string.format('%s%s码%.0f％', progressBar_code(codeTableFirstN[1].ratio), codeTableFirstN[1].codeLen, codeTableFirstN[1].ratio)
 	else
@@ -551,7 +575,7 @@ local function format_weekly_summary()
 		strTable[20] = splitor..'\n'..quotes[math.floor(math.random() * quoteCnt) + 1]
 	end
 
-	return trim(table.concat(strTable, '\n'))
+	return trim(table.concat(strTable, '\n'):gsub("\n+", "\n"):gsub("^%n", ""):gsub("%n$", ""))
 end
 
 -- 显示函数（月统计）
@@ -630,9 +654,21 @@ local function format_monthly_summary()
 	strTable[3] = string.format('上屏 %d 次，输入 %d 字', s.count, s.length)
 	strTable[4] = string.format('极速 %.1f字/分，%.1f键/秒\n均速 %.1f字/分，%.1f键/秒', fastest, fastest*avgCodeLen/60, avgV, avgV*avgCodeLen/60)
 	strTable[5] = string.format('平均码长 %.1f%s', avgCodeLen, avgCodeLenDesc)
-	strTable[7] = string.format('%s单字%.0f％', progressBar_word(ratio1), ratio1)
-	strTable[8] = string.format('%s2字%.0f％', progressBar_word(ratio2), ratio2)
-	strTable[9] = string.format('%s>2字%.0f％', progressBar_word(ratio3), ratio3)
+	if ratio1 > 0 then
+		strTable[7] = string.format('%s单字%.0f％', progressBar_word(ratio1), ratio1)
+	else
+		strTable[7] = ''
+	end
+	if ratio2 > 0 then
+		strTable[8] = string.format('%s2字%.0f％', progressBar_word(ratio2), ratio2)
+	else
+		strTable[8] = ''
+	end
+	if ratio3 > 0 then
+		strTable[9] = string.format('%s>2字%.0f％', progressBar_word(ratio3), ratio3)
+	else
+		strTable[9] = ''
+	end
 	if codeTableFirstN[1].ratio > 0 then
 		strTable[11] = string.format('%s%s码%.0f％', progressBar_code(codeTableFirstN[1].ratio), codeTableFirstN[1].codeLen, codeTableFirstN[1].ratio)
 	else
@@ -660,7 +696,7 @@ local function format_monthly_summary()
 		strTable[20] = splitor..'\n'..quotes[math.floor(math.random() * quoteCnt) + 1]
 	end
 
-	return trim(table.concat(strTable, '\n'))
+	return trim(table.concat(strTable, '\n'):gsub("\n+", "\n"):gsub("^%n", ""):gsub("%n$", ""))
 end
 
 -- 显示函数（年统计）
@@ -739,9 +775,21 @@ local function format_yearly_summary()
 	strTable[3] = string.format('上屏 %d 次，输入 %d 字', s.count, s.length)
 	strTable[4] = string.format('极速 %.1f字/分，%.1f键/秒\n均速 %.1f字/分，%.1f键/秒', fastest, fastest*avgCodeLen/60, avgV, avgV*avgCodeLen/60)
 	strTable[5] = string.format('平均码长 %.1f%s', avgCodeLen, avgCodeLenDesc)
-	strTable[7] = string.format('%s单字%.0f％', progressBar_word(ratio1), ratio1)
-	strTable[8] = string.format('%s2字%.0f％', progressBar_word(ratio2), ratio2)
-	strTable[9] = string.format('%s>2字%.0f％', progressBar_word(ratio3), ratio3)
+	if ratio1 > 0 then
+		strTable[7] = string.format('%s单字%.0f％', progressBar_word(ratio1), ratio1)
+	else
+		strTable[7] = ''
+	end
+	if ratio2 > 0 then
+		strTable[8] = string.format('%s2字%.0f％', progressBar_word(ratio2), ratio2)
+	else
+		strTable[8] = ''
+	end
+	if ratio3 > 0 then
+		strTable[9] = string.format('%s>2字%.0f％', progressBar_word(ratio3), ratio3)
+	else
+		strTable[9] = ''
+	end
 	if codeTableFirstN[1].ratio > 0 then
 		strTable[11] = string.format('%s%s码%.0f％', progressBar_code(codeTableFirstN[1].ratio), codeTableFirstN[1].codeLen, codeTableFirstN[1].ratio)
 	else
@@ -769,7 +817,7 @@ local function format_yearly_summary()
 		strTable[20] = splitor..'\n'..quotes[math.floor(math.random() * quoteCnt) + 1]
 	end
 
-	return trim(table.concat(strTable, '\n'))
+	return trim(table.concat(strTable, '\n'):gsub("\n+", "\n"):gsub("^%n", ""):gsub("%n$", ""))
 end
 
 -- 显示记录的生字/词
@@ -934,7 +982,7 @@ local function init(env)
 	strTable[16] = '◉ 方案：'..schema_name
 	strTable[17] = '◉ 平台：'..software_name..' '..software_version
 	strTable[18] = splitor
-	strTable[19] = '脚本：₂₀₂₅1215・D'
+	strTable[19] = '脚本：₂₀₂₅1215・E'
 	strTable[20] = ''
 	
 	-- 注册提交通知回调
