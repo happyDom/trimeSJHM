@@ -1,31 +1,31 @@
 -- base on github.com/amzxyz
 -- update by github.com/happyDom
 --[[
-首先，把本脚本放在你的方案下的lua文件夹内
+👉首先，把本脚本放在你的方案下的lua文件夹内
 
-※：如果你的脚本名称为 input_statistics ₂₀₂₅1208・A.lua，你需要把文件名改为 input_statistics.lua后再用
+🚩：如果你的脚本名称为 input_statistics ₂₀₂₅1208・A.lua，你需要把文件名改为 input_statistics.lua后再用
 
-※：如果你第一次使用不早于 ₂₀₂₅1208・B 版本的本脚本，请把你原来lua文件夹下的 input_stats.lua删除
+🚩：如果你第一次使用不早于 ₂₀₂₅1208・B 版本的本脚本，请把你原来lua文件夹下的 input_stats.lua删除
 
-其次，如果你的方案可以输入 /fj 以输入特殊符号，可以忽略这条。否则你需要调整你的方案的 alphabet 设定（在补丁中调整），加入符号 /
+👉其次，如果你的方案可以输入 /fj 以输入特殊符号，可以忽略这条。否则你需要调整你的方案的 alphabet 设定（在补丁中调整），加入符号 /
   # 不需要与下面这条安全一样，但需要确认其中有符号 /
   speller/alphabet: "abcdefghijklmnopqrstuvwxyz;'/"
   # 如果你的方案中设置了 initials，请确认其中也包含符号 /，例如：
   speller/initials: ';abcdefghijklmnopqrstuvwxyz/'
 
-再其次，在你的方案补丁文件中，在translators节点加入对 input_statistics 的引用，如下👇：
+👉再其次，在你的方案补丁文件中，在translators节点加入对 input_statistics 的引用，如下👇：
   engine/translators/+:				#定制translator如下
 	- lua_translator@*input_statistics				# 统计输入速度等信息
 
-再其次，为了让统计数据在输入 /01 时有响应，你需要在方案补丁文件中加入以下👇补丁（让方案捕捉/xx [xx为数字] 这类输入):
+👉再其次，为了让统计数据在输入 /01 时有响应，你需要在方案补丁文件中加入以下👇补丁（让方案捕捉/xx [xx为数字] 这类输入):
   recognizer/patterns/punct: '^/([0-9]+|[A-Za-z]+)$'
 
-最后，做为选项，如果你希望在你的统计消息后追加一个随机的名言，你可以在本脚本所在的目录下创建一个 quote.txt 文档，
+👉最后，做为选项，如果你希望在你的统计消息后追加一个随机的名言，你可以在本脚本所在的目录下创建一个 quote.txt 文档，
 在文档内按行写入你想要展示的名句，本脚本会随机从其中的名句中挑选一个追加在统计消息后。
 
-最后，重新部署你的rime/同文
+👉最后，重新部署你的rime/同文
 
-使用提示（例如/01 /rtj 两种方式均可）：
+🚩使用提示（例如/01 /rtj 两种方式均可）：
 /01 /rtj	 查看日统计
 /02 /ztj	 查看周统计
 /03 /ytj	 查看月统计
@@ -41,14 +41,34 @@ local boggleThd_s = 3
 local codeLenOfAutoCommit = 0
 -- 如果你想在平均码长后加以说明，请在这里自定义你的说明内容，可以使用 \n 换行
 local avgCodeLenDesc = ''
--- 定义字词分布进度条填充字符，例如你可以使用 ▉/━/● 来表示
-local progressBarField_word = '▉'
--- 定义字词分布进度条空白字符，例如你可以使用 ▁/┄/▓ 来表示
-local progressBarEmpty_word = '▁'
--- 定义码长分布进度条填充字符，例如你可以使用 ▉/━/● 来表示
-local progressBarField_code = '▉'
--- 定义码长分布进度条空白字符，例如你可以使用 ▁/┄/▓ 来表示
-local progressBarEmpty_code = '▁'
+-- 定义一个皮肤集合，以供选用，您可以往这里加入新自定义的皮肤〔idea from 落羽行歌〕
+local skinList = {
+	{ field = '▉', empty = '▁' }, -- 皮肤1：默认
+	{ field = '━', empty = '┄' }, -- 皮肤2
+	{ field = '●', empty = '○' }, -- 皮肤3
+	{ field = '■', empty = '□' }, -- 皮肤4
+	{ field = '▲', empty = '△' }, -- 皮肤5
+	{ field = '◆', empty = '◇' }, -- 皮肤6
+	{ field = '▶', empty = '▷' }, -- 皮肤7
+	{ field = '◀', empty = '◁' }, -- 皮肤8
+	{ field = '▼', empty = '▽' }, -- 皮肤9
+	{ field = '▶', empty = '▁' }, -- 皮肤10
+	{ field = '▉', empty = '┄' }, -- 皮肤11
+	{ field = '━', empty = '▁' }, -- 皮肤12
+	{ field = '●', empty = '▁' }, -- 皮肤13
+	{ field = '■', empty = '┄' }, -- 皮肤14
+	{ field = '▲', empty = '▁' }, -- 皮肤15
+	{ field = '◆', empty = '┄' }, -- 皮肤16
+	{ field = '▉', empty = '○' }, -- 皮肤17
+	{ field = '━', empty = '□' }, -- 皮肤18
+	{ field = '●', empty = '△' }, -- 皮肤19
+	{ field = '■', empty = '◇' }, -- 皮肤20
+}
+
+-- 指定字词统计条的皮肤索引（从1开始）
+local progressBarSkinIdx_word = 1
+-- 指定码长统计条的皮肤索引（从1开始）
+local progressBarSkinIdx_code = 1
 
 -- 分配一个变量，用于字符串拼接
 local strTable = {}
@@ -61,6 +81,10 @@ local splitor = string.rep("─", 14)
 -- 下面的信息是自动获取的
 local software_name = rime_api.get_distribution_code_name()
 local software_version = rime_api.get_distribution_version()
+local progressBarField_word = skinList[progressBarSkinIdx_word].field
+local progressBarEmpty_word = skinList[progressBarSkinIdx_word].empty
+local progressBarField_code = skinList[progressBarSkinIdx_code].field
+local progressBarEmpty_code = skinList[progressBarSkinIdx_code].empty
 
 -- 一个数据结构体，用于处理平均速度统计临时数据
 avgSpdInfo = {logSts = 0,		-- 统计状态，0：未统计，1:正在统计，2:统计结束
@@ -845,7 +869,7 @@ local function init(env)
 	strTable[16] = '◉ 方案：'..schema_name
 	strTable[17] = '◉ 平台：'..software_name..' '..software_version
 	strTable[18] = splitor
-	strTable[19] = '脚本：₂₀₂₅1214・A'
+	strTable[19] = '脚本：₂₀₂₅1215・B'
 	strTable[20] = ''
 	
 	-- 注册提交通知回调
