@@ -64,14 +64,14 @@ local skinList = {
 	{ field = '━', empty = '□' }, -- 皮肤18
 	{ field = '●', empty = '△' }, -- 皮肤19
 	{ field = '■', empty = '◇' }, -- 皮肤20
-	{ field = '★', empty = '✩' }, -- 皮肤21
+	{ field = '★', empty = '☆' }, -- 皮肤21
 	{ field = '✭', empty = '✩' }, -- 皮肤22
 }
 
 -- 指定字词统计条的皮肤索引（从1开始）
-local progressBarSkinIdx_word = 1
+local progressBarSkinIdx_word = 21
 -- 指定码长统计条的皮肤索引（从1开始）
-local progressBarSkinIdx_code = 1
+local progressBarSkinIdx_code = 21
 
 -- 分配一个变量，用于字符串拼接
 local strTable = {}
@@ -355,7 +355,7 @@ local function formatSkinList()
 		table.insert(skinListText, skinStr)
 	end
 
-	table.insert(skinListText, "● 当前皮肤 / ○ 可选皮肤")
+	table.insert(skinListText, "w 当前字词统计皮肤 / c 当前码长统计皮肤")
 	table.insert(skinListText, "输入 /600 或 /pf 查看皮肤列表")
 	table.insert(skinListText, "输入 /61xx 或 /pfwyy 切换字词统计皮肤(xx为数字，yy为字母)")
 	table.insert(skinListText, "输入 /62xx 或 /pfcyy 切换码长统计皮肤(xx为数字，yy为字母)")
@@ -928,7 +928,7 @@ local function init(env)
 	strTable[16] = '◉ 方案：'..schema_name
 	strTable[17] = '◉ 平台：'..software_name..' '..software_version
 	strTable[18] = splitor
-	strTable[19] = '脚本：₂₀₂₅1215・F'
+	strTable[19] = '脚本：₂₀₂₅1215・G'
 	strTable[20] = ''
 	
 	-- 注册提交通知回调
