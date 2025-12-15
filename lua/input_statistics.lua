@@ -397,13 +397,13 @@ local function format_daily_summary()
 	-- 处理时区问题
 	local timeZone = get_timezone()
 	local timeZoneLen = string.len(timeZone)
-	if splitorLen - 1 > timeZoneLen + 1 then
-		local halfLen = 0.5 * (splitorLen - 1 - timeZoneLen)
+	if splitorLen > timeZoneLen + 1 then
+		local halfLen = 0.5 * (splitorLen - timeZoneLen)
 		local halfLenFloor = math.floor(halfLen)
 		if halfLen > halfLenFloor then
-			timeZone = string.rep('─', halfLenFloor)..timeZone..string.rep('─', splitorLen-timeZoneLen-halfLenFloor)
+			timeZone = string.rep('─', halfLenFloor)..timeZone..string.rep('─', splitorLen-timeZoneLen-halfLenFloor + 1)
 		else
-			timeZone = string.rep('─', halfLenFloor)..timeZone..string.rep('─', splitorLen-timeZoneLen-halfLenFloor - 1)
+			timeZone = string.rep('─', halfLenFloor)..timeZone..string.rep('─', splitorLen-timeZoneLen-halfLenFloor)
 		end
 	end
 	strTable[2] = '📈'..timeZone
@@ -506,13 +506,13 @@ local function format_weekly_summary()
 	-- 处理时区问题
 	local timeZone = get_timezone()
 	local timeZoneLen = string.len(timeZone)
-	if splitorLen - 1 > timeZoneLen + 1 then
-		local halfLen = 0.5 * (splitorLen - 1 - timeZoneLen)
+	if splitorLen > timeZoneLen + 1 then
+		local halfLen = 0.5 * (splitorLen - timeZoneLen)
 		local halfLenFloor = math.floor(halfLen)
 		if halfLen > halfLenFloor then
-			timeZone = string.rep('─', halfLenFloor)..timeZone..string.rep('─', splitorLen-timeZoneLen-halfLenFloor)
+			timeZone = string.rep('─', halfLenFloor)..timeZone..string.rep('─', splitorLen-timeZoneLen-halfLenFloor + 1)
 		else
-			timeZone = string.rep('─', halfLenFloor)..timeZone..string.rep('─', splitorLen-timeZoneLen-halfLenFloor - 1)
+			timeZone = string.rep('─', halfLenFloor)..timeZone..string.rep('─', splitorLen-timeZoneLen-halfLenFloor)
 		end
 	end
 	strTable[2] = '📈'..timeZone
@@ -615,13 +615,13 @@ local function format_monthly_summary()
 	-- 处理时区问题
 	local timeZone = get_timezone()
 	local timeZoneLen = string.len(timeZone)
-	if splitorLen - 1 > timeZoneLen + 1 then
-		local halfLen = 0.5 * (splitorLen - 1 - timeZoneLen)
+	if splitorLen > timeZoneLen + 1 then
+		local halfLen = 0.5 * (splitorLen - timeZoneLen)
 		local halfLenFloor = math.floor(halfLen)
 		if halfLen > halfLenFloor then
-			timeZone = string.rep('─', halfLenFloor)..timeZone..string.rep('─', splitorLen-timeZoneLen-halfLenFloor)
+			timeZone = string.rep('─', halfLenFloor)..timeZone..string.rep('─', splitorLen-timeZoneLen-halfLenFloor + 1)
 		else
-			timeZone = string.rep('─', halfLenFloor)..timeZone..string.rep('─', splitorLen-timeZoneLen-halfLenFloor - 1)
+			timeZone = string.rep('─', halfLenFloor)..timeZone..string.rep('─', splitorLen-timeZoneLen-halfLenFloor)
 		end
 	end
 	strTable[2] = '📈'..timeZone
@@ -724,13 +724,13 @@ local function format_yearly_summary()
 	-- 处理时区问题
 	local timeZone = get_timezone()
 	local timeZoneLen = string.len(timeZone)
-	if splitorLen - 1 > timeZoneLen + 1 then
-		local halfLen = 0.5 * (splitorLen - 1 - timeZoneLen)
+	if splitorLen > timeZoneLen + 1 then
+		local halfLen = 0.5 * (splitorLen - timeZoneLen)
 		local halfLenFloor = math.floor(halfLen)
 		if halfLen > halfLenFloor then
-			timeZone = string.rep('─', halfLenFloor)..timeZone..string.rep('─', splitorLen-timeZoneLen-halfLenFloor)
+			timeZone = string.rep('─', halfLenFloor)..timeZone..string.rep('─', splitorLen-timeZoneLen-halfLenFloor + 1)
 		else
-			timeZone = string.rep('─', halfLenFloor)..timeZone..string.rep('─', splitorLen-timeZoneLen-halfLenFloor - 1)
+			timeZone = string.rep('─', halfLenFloor)..timeZone..string.rep('─', splitorLen-timeZoneLen-halfLenFloor)
 		end
 	end
 	strTable[2] = '📈'..timeZone
@@ -934,7 +934,7 @@ local function init(env)
 	strTable[16] = '◉ 方案：'..schema_name
 	strTable[17] = '◉ 平台：'..software_name..' '..software_version
 	strTable[18] = splitor
-	strTable[19] = '脚本：₂₀₂₅1215・C'
+	strTable[19] = '脚本：₂₀₂₅1215・D'
 	strTable[20] = ''
 	
 	-- 注册提交通知回调
