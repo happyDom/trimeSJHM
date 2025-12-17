@@ -68,11 +68,6 @@ local skinList = {
 	{ field = '✭', empty = '✩' }, -- 皮肤22
 }
 
--- 指定字词统计条的皮肤索引（从1开始）
-local progressBarSkinIdx_word = 21
--- 指定码长统计条的皮肤索引（从1开始）
-local progressBarSkinIdx_code = 21
-
 -- 分配一个变量，用于字符串拼接
 local strTable = {}
 -- 一个用于存放名人名言的表
@@ -85,29 +80,33 @@ local splitor = string.rep("─", splitorLen)
 -- 下面的信息是自动获取的
 local software_name = rime_api.get_distribution_code_name()
 local software_version = rime_api.get_distribution_version()
-local progressBarField_word = skinList[progressBarSkinIdx_word].field
-local progressBarEmpty_word = skinList[progressBarSkinIdx_word].empty
-local progressBarField_code = skinList[progressBarSkinIdx_code].field
-local progressBarEmpty_code = skinList[progressBarSkinIdx_code].empty
 
 -- 一个数据结构体，用于处理平均速度统计临时数据
-avgSpdInfo = {logSts = 0,		-- 统计状态，0：未统计，1:正在统计，2:统计结束
-				startTime=0,	-- 如果正在记录，这里是开始的时间
-				clickTime = 0,	-- 上次按键时间，通过记录按键间隔，判断是否输入超时
-				commitTime=0,	-- 这是最近一次上屏的时间
-				gapThd=5,		-- 如果此次按键距离前一次按键的时间大于此门限值，则重新开始计时
-				count=0			-- 记录期间，上屏的字数
-				}
+local avgSpdInfo = {logSts = 0,		-- 统计状态，0：未统计，1:正在统计，2:统计结束
+					startTime=0,	-- 如果正在记录，这里是开始的时间
+					clickTime = 0,	-- 上次按键时间，通过记录按键间隔，判断是否输入超时
+					commitTime=0,	-- 这是最近一次上屏的时间
+					gapThd=5,		-- 如果此次按键距离前一次按键的时间大于此门限值，则重新开始计时
+					count=0			-- 记录期间，上屏的字数
+}
 
 -- 初始化统计表（若未加载）
-input_stats = input_stats or {
-	daily = {count = 0, length = 0, fastest = 0, ts = 0, lengths = {}, codeLengths = {}, avgGaps = {}, avgCnts = {}},
-	weekly = {count = 0, length = 0, fastest = 0, ts = 0, lengths = {}, codeLengths = {}, avgGaps = {}, avgCnts = {}},
-	monthly = {count = 0, length = 0, fastest = 0, ts = 0, lengths = {}, codeLengths = {}, avgGaps = {}, avgCnts = {}},
-	yearly = {count = 0, length = 0, fastest = 0, ts = 0, lengths = {}, codeLengths = {}, avgGaps = {}, avgCnts = {}},
-	daily_max = 0,
-	newWords = {}
+local input_stats = input_stats or {
+		daily = {count = 0, length = 0, fastest = 0, ts = 0, lengths = {}, codeLengths = {}, avgGaps = {}, avgCnts = {}},
+		weekly = {count = 0, length = 0, fastest = 0, ts = 0, lengths = {}, codeLengths = {}, avgGaps = {}, avgCnts = {}},
+		monthly = {count = 0, length = 0, fastest = 0, ts = 0, lengths = {}, codeLengths = {}, avgGaps = {}, avgCnts = {}},
+		yearly = {count = 0, length = 0, fastest = 0, ts = 0, lengths = {}, codeLengths = {}, avgGaps = {}, avgCnts = {}},
+		daily_max = 0,
+		newWords = {},
+		progressBarSkinIdx_word = 21,	-- 指定字词统计条的皮肤索引（从1开始）
+		progressBarSkinIdx_code = 21	-- 指定码长统计条的皮肤索引（从1开始）
 }
+
+
+local progressBarField_word = skinList[input_stats.progressBarSkinIdx_word].field
+local progressBarEmpty_word = skinList[input_stats.progressBarSkinIdx_word].empty
+local progressBarField_code = skinList[input_stats.progressBarSkinIdx_code].field
+local progressBarEmpty_code = skinList[input_stats.progressBarSkinIdx_code].empty
 
 function trim(str)
     if type(str) ~= "string" then
@@ -338,6 +337,25 @@ local function save_stats(schema_id)
 	file:close()
 end
 
+-- 将一段文字嵌入 splitor 中间
+local function embedTextIntoSplitor(myText)
+	local myTextNew = myText
+	local tmpLen = utf8.len(myText)
+	local halfLen = 0
+	local halfLenFloor = 0
+	if splitorLen > tmpLen + 1 then
+		halfLen = 0.5 * (splitorLen - tmpLen)
+		halfLenFloor = math.floor(halfLen)
+		if halfLen > halfLenFloor then
+			myTextNew = string.rep('─', halfLenFloor)..myText..string.rep('─', splitorLen-tmpLen-halfLenFloor + 1)
+		else
+			myTextNew = string.rep('─', halfLenFloor)..myText..string.rep('─', splitorLen-tmpLen-halfLenFloor)
+		end
+	end
+	
+	return myTextNew
+end
+
 -- 格式化皮肤列表，5个皮肤为一组显示〔from 落羽行歌〕
 local function formatSkinList()
 	local skinListText = {}
@@ -365,21 +383,8 @@ end
 
 -- 格式化统计头部信息〔from 落羽行歌〕
 local function format_statistics_header(stat_type, tBase, s, fastest, avgV, avgCodeLen, avgCodeLenDesc)
-	-- 处理时区问题
-	local timeZone = get_timezone()
-	local timeZoneLen = string.len(timeZone)
-	if splitorLen > timeZoneLen + 1 then
-		local halfLen = 0.5 * (splitorLen - timeZoneLen)
-		local halfLenFloor = math.floor(halfLen)
-		if halfLen > halfLenFloor then
-			timeZone = string.rep('─', halfLenFloor)..timeZone..string.rep('─', splitorLen-timeZoneLen-halfLenFloor + 1)
-		else
-			timeZone = string.rep('─', halfLenFloor)..timeZone..string.rep('─', splitorLen-timeZoneLen-halfLenFloor)
-		end
-	end
-	strTable[2] = '📈'..timeZone
-
-	strTable[1] = string.format('※ %s@%s', stat_type, os.date("%Y/%m/%d %H:%M:%S", tBase))
+	strTable[1] = embedTextIntoSplitor(string.format('※%s※', stat_type))..'\n'..os.date("%Y/%m/%d %H:%M:%S", tBase)
+	strTable[2] = '📈'..embedTextIntoSplitor(get_timezone())
 	strTable[3] = string.format('上屏 %d 次，输入 %d 字', s.count, s.length)
 	-- 显示击键信息 〔from Chopper〕
 	strTable[4] = string.format('极速 %.1f字/分，%.1f键/秒\n均速 %.1f字/分，%.1f键/秒', fastest, fastest * avgCodeLen / 60, avgV, avgV * avgCodeLen / 60)
@@ -769,7 +774,9 @@ local function load_stats_from_lua_file(schema_id)
 			monthly = {count = 0, length = 0, fastest = 0, ts = 0, lengths = {}, codeLengths = {}, avgGaps = {}, avgCnts = {}},
 			yearly = {count = 0, length = 0, fastest = 0, ts = 0, lengths = {}, codeLengths = {}, avgGaps = {}, avgCnts = {}},
 			daily_max = 0,
-			newWords = {}
+			newWords = {},
+			progressBarSkinIdx_word = 21,
+			progressBarSkinIdx_code = 21
 		}
 	end
 end
@@ -828,7 +835,9 @@ local function translator(input, seg, env)
 			monthly = {count = 0, length = 0, fastest = 0, ts = 0, lengths = {}, codeLengths = {}, avgGaps = {}, avgCnts = {}},
 			yearly = {count = 0, length = 0, fastest = 0, ts = 0, lengths = {}, codeLengths = {}, avgGaps = {}, avgCnts = {}},
 			daily_max = 0,
-			newWords = {}
+			newWords = {},
+			progressBarSkinIdx_word = 21,
+			progressBarSkinIdx_code = 21
 		}
 		save_stats(env.engine.schema.schema_id)
 		summary = "※ 所有统计数据已清空。"
@@ -838,44 +847,52 @@ local function translator(input, seg, env)
 		elseif input:match("^/61(%d%d)$") then		-- 设置字词统计皮肤
 			local skinIndex = tonumber(input:match("^/61(%d%d)$"))
 			if skinIndex and skinIndex >= 1 and skinIndex <= #skinList then
-				progressBarSkinIdx_word = skinIndex
-				progressBarField_word = skinList[progressBarSkinIdx_word].field
-				progressBarEmpty_word = skinList[progressBarSkinIdx_word].empty
+				input_stats.progressBarSkinIdx_word = skinIndex
+				progressBarField_word = skinList[input_stats.progressBarSkinIdx_word].field
+				progressBarEmpty_word = skinList[input_stats.progressBarSkinIdx_word].empty
 				summary = string.format("※ 字词统计皮肤已切换至：/61%02d %s%s",
 					skinIndex, progressBarField_word, progressBarEmpty_word)
+				
+				save_stats(env.engine.schema.schema_id)
 			else
 				summary = "※ 无效的皮肤编号〔"..input:sub(4,5)..'〕'
 			end
 		elseif input:match("^/62(%d%d)$") then		-- 设置码长统计皮肤
 			local skinIndex = tonumber(input:match("^/62(%d%d)$"))
 			if skinIndex and skinIndex >= 1 and skinIndex <= #skinList then
-				progressBarSkinIdx_code = skinIndex
-				progressBarField_code = skinList[progressBarSkinIdx_code].field
-				progressBarEmpty_code = skinList[progressBarSkinIdx_code].empty
+				input_stats.progressBarSkinIdx_code = skinIndex
+				progressBarField_code = skinList[input_stats.progressBarSkinIdx_code].field
+				progressBarEmpty_code = skinList[input_stats.progressBarSkinIdx_code].empty
 				summary = string.format("※ 码长皮肤已切换至：/61%02d %s%s",
 					skinIndex, progressBarField_code, progressBarEmpty_code)
+				
+				save_stats(env.engine.schema.schema_id)
 			else
 				summary = "※ 无效的皮肤编号〔"..input:sub(4,5)..'〕'
 			end
 		elseif input:match("^/pfw[a-z][a-z]$") then		-- 设置字词统计皮肤
 			local skinIndex = (string.byte(input:sub(5,5)) - 97) * 10 + string.byte(input:sub(6,6)) - 97
 			if skinIndex and skinIndex >= 1 and skinIndex <= #skinList then
-				progressBarSkinIdx_word = skinIndex
-				progressBarField_word = skinList[progressBarSkinIdx_word].field
-				progressBarEmpty_word = skinList[progressBarSkinIdx_word].empty
+				input_stats.progressBarSkinIdx_word = skinIndex
+				progressBarField_word = skinList[input_stats.progressBarSkinIdx_word].field
+				progressBarEmpty_word = skinList[input_stats.progressBarSkinIdx_word].empty
 				summary = string.format("※ 字词统计皮肤已切换至：/pfw%s %s%s",
 					input:sub(5,6), progressBarField_word, progressBarEmpty_word)
+				
+				save_stats(env.engine.schema.schema_id)
 			else
 				summary = "※ 无效的皮肤编号〔"..input:sub(5,6)..'〕'
 			end
 		elseif input:match("^/pfc[a-z][a-z]$") then		-- 设置字词统计皮肤
 			local skinIndex = (string.byte(input:sub(5,5)) - 97) * 10 + string.byte(input:sub(6,6)) - 97
 			if skinIndex and skinIndex >= 1 and skinIndex <= #skinList then
-				progressBarSkinIdx_code = skinIndex
-				progressBarField_code = skinList[progressBarSkinIdx_code].field
-				progressBarEmpty_code = skinList[progressBarSkinIdx_code].empty
+				input_stats.progressBarSkinIdx_code = skinIndex
+				progressBarField_code = skinList[input_stats.progressBarSkinIdx_code].field
+				progressBarEmpty_code = skinList[input_stats.progressBarSkinIdx_code].empty
 				summary = string.format("※ 码长皮肤已切换至：/pfc%s %s%s",
 					input:sub(5,6), progressBarField_code, progressBarEmpty_code)
+				
+				save_stats(env.engine.schema.schema_id)
 			else
 				summary = "※ 无效的皮肤编号〔"..input:sub(5,6)..'〕'
 			end
@@ -903,6 +920,11 @@ local function init(env)
 	local ctx = env.engine.context
 	-- 加载指定输入方案的历史统计数据
 	load_stats_from_lua_file(env.engine.schema.schema_id)
+	-- 更新皮肤
+	progressBarField_word = skinList[input_stats.progressBarSkinIdx_word].field
+	progressBarEmpty_word = skinList[input_stats.progressBarSkinIdx_word].empty
+	progressBarField_code = skinList[input_stats.progressBarSkinIdx_code].field
+	progressBarEmpty_code = skinList[input_stats.progressBarSkinIdx_code].empty
 	-- 加载名人名言
 	quoteLoad()
 	
@@ -928,7 +950,7 @@ local function init(env)
 	strTable[16] = '◉ 方案：'..schema_name
 	strTable[17] = '◉ 平台：'..software_name..' '..software_version
 	strTable[18] = splitor
-	strTable[19] = '脚本：₂₀₂₅1215・G'
+	strTable[19] = '脚本：₂₀₂₅1217・A'
 	strTable[20] = ''
 	
 	-- 注册提交通知回调
