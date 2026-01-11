@@ -1,5 +1,15 @@
--- 简单计算器 translator，仅支持 + - * / 四则运算，不支持任何非[0-9+\-*/]内的符号
--- 触发方式：输入 /算式 例如 /1+2*3
+--[[simple_calculator.lua
+Copyright (C) 2025 yaoyuan.dou <douyaoyuan@126.com>
+
+说明：
+1、简单计算器 translator，仅支持 + - * / 四则运算，不支持任何非[0-9+\-*/]内的符号
+2、支持逗号/句号自动转换为小数点
+3、支持^运算符转换为上标写法
+4、支持括号运算
+
+触发方式：
+输入 //算式 例如 //1+2*3+6/3
+]]
 
 -- 数字转上标映射表
 local superscripts = {
@@ -59,12 +69,12 @@ end
 -- 该函数参考 wanxiang，并由 GPT生成
 local function simple_calculator(input, seg, env)
     -- 必须以 / 开头
-    if not input:match("^/") then
+    if not input:match("^//") then
         return
     end
 
-    -- 去掉开头的 /
-    local expr = input:sub(2)
+    -- 去掉开头的 //
+    local expr = input:sub(3)
 	
 	-- 把 , ， 。 全部替换成小数点
     expr = expr:gsub("[,，。]", ".")
